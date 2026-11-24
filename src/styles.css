@@ -67,3 +67,19 @@ footer{max-width:1160px;margin:auto;padding:22px 28px 28px;display:flex;justify-
 .invite-form h3{display:flex;align-items:center;gap:8px;margin:0 0 2px;font:700 15px Manrope,sans-serif;color:#263451}
 .secondary-button{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:42px;margin-top:18px;border:1px solid #e1e5ef;border-radius:9px;background:#fff;color:#59657d;font-size:12px;font-weight:700}
 .secondary-button:hover{background:#f7f8fc}
+
+
+.role-switch{margin:0 0 16px}
+.role-switch button{min-height:43px}
+.plan-picker{display:flex;flex-direction:column;gap:8px}
+.plan-label{font-size:11px;font-weight:700;color:#47536c}
+.plan-option{position:relative;display:flex;align-items:center;justify-content:space-between;text-align:left;gap:10px;border:1px solid #e5e8f0;background:#fff;border-radius:9px;padding:10px 12px;color:#68738a;font-size:11px}
+.plan-option strong{color:#253451;font-size:13px}
+.plan-option strong small{font-size:10px;font-weight:500;color:#8790a3}
+.plan-option.chosen{border-color:#8794e8;background:#f5f6ff;box-shadow:0 0 0 2px #6679df12}
+.plan-option em{font-style:normal;font-size:9px;color:#267247;background:#eaf7ef;padding:4px 6px;border-radius:5px}
+.school-plan-note{display:flex;flex-direction:column;gap:4px;border:1px solid #dfe4ff;background:#f6f7ff;border-radius:9px;padding:12px;color:#59647c;font-size:10px}
+.school-plan-note strong{font:800 16px Manrope,sans-serif;color:#29385b}
+.workspace-next{display:flex;align-items:flex-start;gap:9px;background:#f3f7ff;border:1px solid #e3e9ff;border-radius:10px;padding:13px;color:#66718b;font-size:11px;line-height:1.6;margin-top:20px}
+.workspace-next svg{color:#5d70d7;flex-shrink:0;margin-top:1px}
+.notice.success{display:flex;align-items:center;gap:7px}
