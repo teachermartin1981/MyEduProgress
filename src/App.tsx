@@ -1,20 +1,24 @@
 import { useState, type FormEvent } from 'react'
-import { ArrowRight, BookOpenCheck, Building2, GraduationCap, LockKeyhole, Mail, ShieldCheck, Sparkles, UserPlus, LogOut } from 'lucide-react'
+import { ArrowRight, BookOpenCheck, Building2, GraduationCap, LockKeyhole, Mail, ShieldCheck, Sparkles, UserPlus, LogOut, CheckCircle2 } from 'lucide-react'
 import { supabase } from './lib/supabase'
 
 type Portal = 'student' | 'staff'
+type WorkspaceType = 'teacher' | 'school'
+type PlanId = 'teacher_monthly' | 'teacher_annual' | 'school_monthly'
 type Notice = { kind: 'error' | 'success' | 'info'; text: string } | null
-type Workspace = { schoolId: string; schoolName: string; role: 'school_admin' | 'teacher'; fullName: string }
+type Workspace = { id: string; name: string; type: WorkspaceType; role: 'owner' | 'admin' | 'teacher' }
 
 export default function App() {
   const [portal, setPortal] = useState<Portal>('student')
   const [staffMode, setStaffMode] = useState<'login' | 'signup'>('login')
+  const [workspaceType, setWorkspaceType] = useState<WorkspaceType>('teacher')
+  const [planId, setPlanId] = useState<PlanId>('teacher_monthly')
   const [studentId, setStudentId] = useState('')
   const [pac, setPac] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
-  const [schoolName, setSchoolName] = useState('Holy Mary Udonthani School')
+  const [workspaceName, setWorkspaceName] = useState('')
   const [inviteName, setInviteName] = useState('')
   const [inviteEmail, setInviteEmail] = useState('')
   const [busy, setBusy] = useState(false)
@@ -26,24 +30,34 @@ export default function App() {
     setNotice({ kind: 'info', text: 'Student sign-in will be enabled after the secure Student ID and Personal Access Code service is completed.' })
   }
 
-  async function finishSchoolSetup(accessToken: string, name: string, school: string) {
-    const { data, error } = await supabase.functions.invoke('school-onboarding', {
-      body: { action: 'bootstrap_school', full_name: name, school_name: school },
+  async function createWorkspace(accessToken: string, details: { fullName: string; name: string; type: WorkspaceType; planId: PlanId }) {
+    const { data, error } = await supabase.functions.invoke('workspace-onboarding', {
+      body: {
+        action: 'create_workspace',
+        full_name: details.fullName,
+        workspace_name: details.name,
+        workspace_type: details.type,
+        plan_id: details.planId,
+      },
       headers: { Authorization: `Bearer ${accessToken}` },
     })
     if (error || data?.error) throw new Error(data?.error || error.message)
-    return data.school_id as string
+    return String(data.workspace_id)
   }
 
-  async function loadWorkspace(userId: string, expectedRole?: 'school_admin' | 'teacher') {
-    const { data, error } = await supabase.from('school_memberships')
-      .select('school_id, role, active, schools(name)')
+  async function loadWorkspace(userId: string) {
+    const { data, error } = await supabase.from('workspace_memberships')
+      .select('workspace_id, role, workspaces!inner(name, workspace_type)')
       .eq('user_id', userId).eq('active', true).limit(1).maybeSingle()
-    if (error) throw new Error('Could not load your school membership. Please try again.')
-    if (!data) throw new Error('This account is not connected to an active school. Ask your school administrator for an invitation.')
-    if (expectedRole && data.role !== expectedRole) throw new Error(`This account has the role ${data.role === 'school_admin' ? 'School Admin' : 'Teacher'}, not ${expectedRole === 'school_admin' ? 'School Admin' : 'Teacher'}.`)
-    const school = data.schools as unknown as { name: string } | null
-    setWorkspace({ schoolId: data.school_id, schoolName: school?.name || 'Your school', role: data.role as Workspace['role'], fullName: '' })
+    if (error) throw new Error('Could not load your workspace. Please try again.')
+    if (!data) throw new Error('This account is not connected to a workspace yet. Register a workspace or ask its owner for an invitation.')
+    const details = data.workspaces as unknown as { name: string; workspace_type: WorkspaceType }
+    setWorkspace({
+      id: data.workspace_id,
+      name: details.name,
+      type: details.workspace_type,
+      role: data.role as Workspace['role'],
+    })
   }
 
   async function handleStaffLogin(event: FormEvent<HTMLFormElement>) {
@@ -54,42 +68,63 @@ export default function App() {
       setBusy(false); setNotice({ kind: 'error', text: error?.message || 'Sign-in failed.' }); return
     }
     try {
-      const { data: existing } = await supabase.from('school_memberships').select('id').eq('user_id', data.user.id).eq('active', true).limit(1).maybeSingle()
+      const { data: existing, error: membershipError } = await supabase.from('workspace_memberships')
+        .select('id').eq('user_id', data.user.id).eq('active', true).limit(1).maybeSingle()
+      if (membershipError) throw new Error('Could not check your workspace membership.')
       if (!existing) {
         const metadata = data.user.user_metadata || {}
-        if (!metadata.school_name || !metadata.full_name) throw new Error('This account has not been connected to a school. Please complete school registration or ask an administrator for an invitation.')
-        await finishSchoolSetup(data.session.access_token, String(metadata.full_name), String(metadata.school_name))
+        const type = metadata.workspace_type as WorkspaceType
+        const plan = metadata.plan_id as PlanId
+        if (!metadata.workspace_name || !metadata.full_name || !['teacher', 'school'].includes(type) ||
+            !['teacher_monthly', 'teacher_annual', 'school_monthly'].includes(plan)) {
+          throw new Error('No workspace is connected to this account. Please register as a teacher or school, or ask for an invitation.')
+        }
+        await createWorkspace(data.session.access_token, {
+          fullName: String(metadata.full_name),
+          name: String(metadata.workspace_name),
+          type,
+          planId: plan,
+        })
       }
       await loadWorkspace(data.user.id)
       setNotice({ kind: 'success', text: 'Signed in successfully.' })
     } catch (e) {
-      await supabase.auth.signOut()
-      setNotice({ kind: 'error', text: e instanceof Error ? e.message : 'Account setup failed.' })
+      setNotice({ kind: 'error', text: e instanceof Error ? e.message : 'Workspace setup failed.' })
     } finally { setBusy(false) }
   }
 
   async function handleSignup(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setNotice(null); setBusy(true)
+    const selectedPlan: PlanId = workspaceType === 'school' ? 'school_monthly' : planId
     const { data, error } = await supabase.auth.signUp({
-      email, password,
+      email: email.trim().toLowerCase(),
+      password,
       options: {
-        data: { full_name: fullName.trim(), school_name: schoolName.trim() },
+        data: {
+          full_name: fullName.trim(),
+          workspace_name: workspaceName.trim(),
+          workspace_type: workspaceType,
+          plan_id: selectedPlan,
+        },
         emailRedirectTo: `${window.location.origin}${import.meta.env.BASE_URL}`,
       },
     })
     if (error) {
       setBusy(false); setNotice({ kind: 'error', text: error.message }); return
     }
-    if (data.session) {
+    if (data.session && data.user) {
       try {
-        await finishSchoolSetup(data.session.access_token, fullName, schoolName)
-        await loadWorkspace(data.user!.id, 'school_admin')
-        setNotice({ kind: 'success', text: 'Your school and administrator account have been created.' })
+        await createWorkspace(data.session.access_token, {
+          fullName, name: workspaceName, type: workspaceType, planId: selectedPlan,
+        })
+        await loadWorkspace(data.user.id)
+        setNotice({ kind: 'success', text: 'Your workspace has been created. Welcome to MyEduProgress!' })
       } catch (e) {
-        setNotice({ kind: 'error', text: e instanceof Error ? e.message : 'School setup failed.' })
+        setNotice({ kind: 'error', text: e instanceof Error ? e.message : 'Workspace setup failed.' })
       }
     } else {
-      setNotice({ kind: 'success', text: 'Account created. Check your email to confirm your address. Then return here and sign in to finish registering your school.' })
+      setNotice({ kind: 'success', text: 'Account created. Check your email to confirm your address. Then return here and sign in to finish setting up your workspace.' })
+      setStaffMode('login')
     }
     setBusy(false)
   }
@@ -97,12 +132,12 @@ export default function App() {
   async function handleInviteTeacher(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); if (!workspace) return
     setBusy(true); setNotice(null)
-    const { data, error } = await supabase.functions.invoke('school-onboarding', {
-      body: { action: 'invite_teacher', school_id: workspace.schoolId, full_name: inviteName, email: inviteEmail },
+    const { data, error } = await supabase.functions.invoke('workspace-onboarding', {
+      body: { action: 'invite_workspace_teacher', workspace_id: workspace.id, full_name: inviteName, email: inviteEmail },
     })
     setBusy(false)
     if (error || data?.error) setNotice({ kind: 'error', text: data?.error || error.message })
-    else { setNotice({ kind: 'success', text: 'Teacher invitation sent. They can accept the email invitation and set their password.' }); setInviteName(''); setInviteEmail('') }
+    else { setNotice({ kind: 'success', text: 'Teacher invitation sent.' }); setInviteName(''); setInviteEmail('') }
   }
 
   async function signOut() {
@@ -112,39 +147,41 @@ export default function App() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <a className="brand" href="/" aria-label="MyEduProgress home"><span className="brand-mark"><BookOpenCheck size={21} /></span><span>MyEdu<span>Progress</span></span></a>
-        <button className="staff-link" onClick={() => { setPortal('staff'); setNotice(null) }}>School &amp; Teacher Login <ArrowRight size={15} /></button>
+        <a className="brand" href={import.meta.env.BASE_URL} aria-label="MyEduProgress home"><span className="brand-mark"><BookOpenCheck size={21} /></span><span>MyEdu<span>Progress</span></span></a>
+        <button className="staff-link" onClick={() => { setPortal('staff'); setNotice(null) }}>Teacher &amp; School Login <ArrowRight size={15} /></button>
       </header>
       <main>
         <section className="hero">
           <div className="hero-copy">
             <div className="eyebrow"><Sparkles size={14} /> A clearer picture of learning</div>
             <h1>Every student.<br /><span>Every step.</span><br />Every achievement.</h1>
-            <p className="hero-lede">A smarter way for schools to assess, support and track student progress — all in one place.</p>
-            <div className="trust-points"><span><ShieldCheck size={16} /> School-focused</span><span><Building2 size={16} /> Built for growing schools</span></div>
+            <p className="hero-lede">A smarter way for teachers and schools to assess, support and track student progress — all in one place.</p>
+            <div className="trust-points"><span><ShieldCheck size={16} /> Secure workspaces</span><span><Building2 size={16} /> Built for teachers and schools</span></div>
           </div>
           <section className="login-card" aria-label="Login">
             {workspace ? (
               <>
-                <div className="card-heading"><div><div className="card-kicker">SCHOOL WORKSPACE</div><h2>Welcome, {workspace.role === 'school_admin' ? 'Administrator' : 'Teacher'}</h2><p>{workspace.schoolName}</p></div><div className="card-icon"><Building2 size={23}/></div></div>
-                <div className="notice success">Signed in as {workspace.role === 'school_admin' ? 'School Admin' : 'Teacher'}.</div>
-                {workspace.role === 'school_admin' ? (
+                <div className="card-heading"><div><div className="card-kicker">{workspace.type === 'teacher' ? 'TEACHER WORKSPACE' : 'SCHOOL WORKSPACE'}</div><h2>Welcome back</h2><p>{workspace.name}</p></div><div className="card-icon">{workspace.type === 'teacher' ? <GraduationCap size={23}/> : <Building2 size={23}/>}</div></div>
+                <div className="notice success"><CheckCircle2 size={14}/> Signed in as {workspace.role === 'owner' ? 'Workspace Owner' : workspace.role === 'admin' ? 'Administrator' : 'Teacher'}.</div>
+                {workspace.type === 'school' && ['owner','admin'].includes(workspace.role) ? (
                   <form className="login-form invite-form" onSubmit={handleInviteTeacher}>
                     <h3><UserPlus size={17}/> Invite a teacher</h3>
                     <label>Teacher's full name<input value={inviteName} onChange={e=>setInviteName(e.target.value)} placeholder="Teacher name" required/></label>
                     <label>Teacher's email<div className="input-wrap"><Mail size={17}/><input type="email" value={inviteEmail} onChange={e=>setInviteEmail(e.target.value)} placeholder="teacher@school.com" required/></div></label>
                     <button className="primary-button" disabled={busy}>{busy ? 'Sending…' : 'Send teacher invitation'} <ArrowRight size={17}/></button>
-                    <p className="form-help">The teacher receives an email invitation to set their password. Their role is assigned by the server.</p>
+                    <p className="form-help">The school plan includes up to 100 active teacher accounts.</p>
                   </form>
-                ) : <p className="form-help">Your teacher workspace is being prepared. Your school administrator can assign classes and assessments.</p>}
+                ) : (
+                  <div className="workspace-next"><CheckCircle2 size={18}/><span>Your secure workspace is connected. Class management and assessment tools are the next modules to build.</span></div>
+                )}
                 <button className="secondary-button" onClick={signOut}><LogOut size={16}/> Sign out</button>
               </>
             ) : (
               <>
-                <div className="card-heading"><div><div className="card-kicker">WELCOME BACK</div><h2>{portal === 'student' ? 'Student login' : staffMode === 'signup' ? 'Register your school' : 'School portal'}</h2><p>{portal === 'student' ? 'Use the login details provided by your school.' : staffMode === 'signup' ? 'Create the first administrator account for your school.' : 'Sign in to your school workspace.'}</p></div><div className="card-icon">{portal === 'student' ? <GraduationCap size={23}/> : <Building2 size={23}/>}</div></div>
+                <div className="card-heading"><div><div className="card-kicker">WELCOME TO MYEDUPROGRESS</div><h2>{portal === 'student' ? 'Student login' : staffMode === 'signup' ? 'Create your workspace' : 'Teacher & school portal'}</h2><p>{portal === 'student' ? 'Use the login details provided by your teacher.' : staffMode === 'signup' ? 'Start with an individual teacher or school workspace.' : 'Sign in to continue your learning journey.'}</p></div><div className="card-icon">{portal === 'student' ? <GraduationCap size={23}/> : <Building2 size={23}/>}</div></div>
                 <div className="portal-switch" role="tablist" aria-label="Choose login type">
                   <button className={portal === 'student' ? 'active' : ''} onClick={() => {setPortal('student');setNotice(null)}}>Student</button>
-                  <button className={portal === 'staff' ? 'active' : ''} onClick={() => {setPortal('staff');setNotice(null)}}>Teacher / Admin</button>
+                  <button className={portal === 'staff' ? 'active' : ''} onClick={() => {setPortal('staff');setNotice(null)}}>Teacher / School</button>
                 </div>
                 {portal === 'student' ? (
                   <form onSubmit={handleStudentLogin} className="login-form">
@@ -157,17 +194,32 @@ export default function App() {
                   <>
                     <div className="mode-switch">
                       <button className={staffMode==='login'?'selected':''} onClick={()=>{setStaffMode('login');setNotice(null)}}>Sign in</button>
-                      <button className={staffMode==='signup'?'selected':''} onClick={()=>{setStaffMode('signup');setNotice(null)}}>Register school</button>
+                      <button className={staffMode==='signup'?'selected':''} onClick={()=>{setStaffMode('signup');setNotice(null)}}>Register</button>
                     </div>
+                    {staffMode === 'signup' && (
+                      <div className="role-switch">
+                        <button type="button" className={workspaceType==='teacher'?'selected':''} onClick={()=>{setWorkspaceType('teacher');setPlanId('teacher_monthly');setNotice(null)}}><GraduationCap size={15}/> Individual teacher</button>
+                        <button type="button" className={workspaceType==='school'?'selected':''} onClick={()=>{setWorkspaceType('school');setNotice(null)}}><Building2 size={15}/> Register a school</button>
+                      </div>
+                    )}
                     <form onSubmit={staffMode==='signup'?handleSignup:handleStaffLogin} className="login-form">
                       {staffMode==='signup' && <>
-                        <label>Your full name<input value={fullName} onChange={e=>setFullName(e.target.value)} placeholder="Administrator name" required/></label>
-                        <label>School name<input value={schoolName} onChange={e=>setSchoolName(e.target.value)} required/></label>
+                        <label>Your full name<input value={fullName} onChange={e=>setFullName(e.target.value)} placeholder="Your name" required/></label>
+                        <label>{workspaceType==='teacher'?'Workspace name':'School name'}<input value={workspaceName} onChange={e=>setWorkspaceName(e.target.value)} placeholder={workspaceType==='teacher'?'e.g. My Teaching Workspace':'School name'} required/></label>
+                        {workspaceType === 'teacher' ? (
+                          <div className="plan-picker">
+                            <span className="plan-label">Choose your teacher plan</span>
+                            <button type="button" className={planId==='teacher_monthly'?'plan-option chosen':''} onClick={()=>setPlanId('teacher_monthly')}><span>Monthly</span><strong>$9.90 <small>/ month</small></strong></button>
+                            <button type="button" className={planId==='teacher_annual'?'plan-option chosen':''} onClick={()=>setPlanId('teacher_annual')}><span>Annual</span><strong>$50 <small>/ year</small></strong><em>Save $68.80</em></button>
+                          </div>
+                        ) : (
+                          <div className="school-plan-note"><strong>$50 / month</strong><span>Up to 100 teachers in one school workspace.</span></div>
+                        )}
                       </>}
-                      <label>Email address<div className="input-wrap"><Mail size={17}/><input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@school.com" required/></div></label>
+                      <label>Email address<div className="input-wrap"><Mail size={17}/><input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com" required/></div></label>
                       <label>Password<div className="input-wrap"><LockKeyhole size={17}/><input type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder={staffMode==='signup'?'At least 8 characters':'Enter your password'} minLength={staffMode==='signup'?8:undefined} required/></div></label>
-                      <button className="primary-button" disabled={busy}>{busy ? 'Please wait…' : staffMode==='signup'?'Create school administrator account':'Sign in'} <ArrowRight size={17}/></button>
-                      <p className="form-help">{staffMode==='signup'?'This one-time registration creates the first school and its administrator. Further school registrations are closed.':'Teacher accounts are invited by a school administrator.'}</p>
+                      <button className="primary-button" disabled={busy}>{busy ? 'Please wait…' : staffMode==='signup'?'Create workspace account':'Sign in'} <ArrowRight size={17}/></button>
+                      <p className="form-help">{staffMode==='signup'?'Your subscription will be recorded during setup. Payment activation will come later.':'Use the email address and password connected to your workspace.'}</p>
                     </form>
                   </>
                 )}
@@ -178,7 +230,7 @@ export default function App() {
           </section>
         </section>
         <section className="bottom-strip">
-          <div><span className="strip-icon"><ShieldCheck size={18}/></span><span><strong>One secure school space</strong><small>Each school has its own protected data.</small></span></div>
+          <div><span className="strip-icon"><ShieldCheck size={18}/></span><span><strong>Secure workspaces</strong><small>Your classes and student data stay protected.</small></span></div>
           <div><span className="strip-icon"><GraduationCap size={18}/></span><span><strong>Student-centred</strong><small>Progress that follows the learner.</small></span></div>
           <div><span className="strip-icon"><BookOpenCheck size={18}/></span><span><strong>Connected learning tools</strong><small>Assessments, feedback and growth.</small></span></div>
         </section>
