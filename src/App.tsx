@@ -72,7 +72,10 @@ export default function App() {
     event.preventDefault(); setNotice(null); setBusy(true)
     const { data, error } = await supabase.auth.signUp({
       email, password,
-      options: { data: { full_name: fullName.trim(), school_name: schoolName.trim() } },
+      options: {
+        data: { full_name: fullName.trim(), school_name: schoolName.trim() },
+        emailRedirectTo: `${window.location.origin}${import.meta.env.BASE_URL}`,
+      },
     })
     if (error) {
       setBusy(false); setNotice({ kind: 'error', text: error.message }); return
