@@ -1,10 +1,9 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
+// These are public browser credentials. Never place a Supabase service-role
+// key in this file or in any VITE_ environment variable.
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://pzdcjjvwjzyjjkygliat.supabase.co'
+const supabasePublishableKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_xCLhcxoLn2J3u-TVWPCPpA_C47nq2_W'
 
-export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey)
-
-export const supabase = isSupabaseConfigured
-  ? createClient(supabaseUrl!, supabaseAnonKey!)
-  : null
+export const supabase = createClient(supabaseUrl, supabasePublishableKey)
+export const isSupabaseConfigured = true
