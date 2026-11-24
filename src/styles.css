@@ -59,3 +59,11 @@ h1 span{color:#586bd7}
 footer{max-width:1160px;margin:auto;padding:22px 28px 28px;display:flex;justify-content:space-between;color:#a0a7b5;font-size:10px}
 @media(max-width:760px){.topbar{height:70px;padding:0 20px}.brand{font-size:18px}main{padding:26px 20px 20px}.hero{grid-template-columns:1fr;gap:24px;min-height:0}.hero-copy{padding:10px 0 0}h1{font-size:48px;letter-spacing:-2.5px;margin:20px 0 14px}.hero-lede{font-size:15px}.trust-points{margin-top:20px;gap:14px}.login-card{justify-self:center;max-width:none;padding:23px}.bottom-strip{grid-template-columns:1fr;gap:15px;margin-top:28px}.bottom-strip>div{justify-content:flex-start}footer{padding:18px 20px;gap:10px;flex-wrap:wrap}}
 @media(max-width:390px){h1{font-size:41px}.staff-link{font-size:11px;padding:8px}.brand{font-size:16px}}
+
+.mode-switch{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:#f3f5fa;padding:4px;border-radius:10px;margin:0 0 18px}
+.mode-switch button{border:0;background:transparent;border-radius:7px;padding:9px;color:#7b8498;font-size:12px;font-weight:700}
+.mode-switch button.selected{background:#fff;color:#465bc6;box-shadow:0 2px 8px #1b2c5112}
+.invite-form{margin-top:22px}
+.invite-form h3{display:flex;align-items:center;gap:8px;margin:0 0 2px;font:700 15px Manrope,sans-serif;color:#263451}
+.secondary-button{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:42px;margin-top:18px;border:1px solid #e1e5ef;border-radius:9px;background:#fff;color:#59657d;font-size:12px;font-weight:700}
+.secondary-button:hover{background:#f7f8fc}
