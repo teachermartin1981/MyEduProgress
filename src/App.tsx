@@ -169,13 +169,16 @@ export default function App() {
                 <div className="card-heading"><div><div className="card-kicker">{workspace.type === 'teacher' ? 'TEACHER WORKSPACE' : 'SCHOOL WORKSPACE'}</div><h2>Welcome back</h2><p>{workspace.name}</p></div><div className="card-icon">{workspace.type === 'teacher' ? <GraduationCap size={23}/> : <Building2 size={23}/>}</div></div>
                 <div className="notice success"><CheckCircle2 size={14}/> Signed in as {workspace.role === 'owner' ? 'Workspace Owner' : workspace.role === 'admin' ? 'Administrator' : 'Teacher'}.</div>
                 {workspace.type === 'school' && ['owner','admin'].includes(workspace.role) ? (
-                  <form className="login-form invite-form" onSubmit={handleInviteTeacher}>
-                    <h3><UserPlus size={17}/> Invite a teacher</h3>
-                    <label>Teacher's full name<input value={inviteName} onChange={e=>setInviteName(e.target.value)} placeholder="Teacher name" required/></label>
-                    <label>Teacher's email<div className="input-wrap"><Mail size={17}/><input type="email" value={inviteEmail} onChange={e=>setInviteEmail(e.target.value)} placeholder="teacher@school.com" required/></div></label>
-                    <button className="primary-button" disabled={busy}>{busy ? 'Sending…' : 'Send teacher invitation'} <ArrowRight size={17}/></button>
-                    <p className="form-help">The school plan includes up to 100 active teacher accounts.</p>
-                  </form>
+                  <>
+                    <form className="login-form invite-form" onSubmit={handleInviteTeacher}>
+                      <h3><UserPlus size={17}/> Invite a teacher</h3>
+                      <label>Teacher's full name<input value={inviteName} onChange={e=>setInviteName(e.target.value)} placeholder="Teacher name" required/></label>
+                      <label>Teacher's email<div className="input-wrap"><Mail size={17}/><input type="email" value={inviteEmail} onChange={e=>setInviteEmail(e.target.value)} placeholder="teacher@school.com" required/></div></label>
+                      <button className="primary-button" disabled={busy}>{busy ? 'Sending…' : 'Send teacher invitation'} <ArrowRight size={17}/></button>
+                      <p className="form-help">The school plan includes up to 100 active teacher accounts.</p>
+                    </form>
+                    <ClassManagement workspaceId={workspace.id} workspaceName={workspace.name} role={workspace.role} workspaceType={workspace.type} />
+                  </>
                 ) : (
                   <ClassManagement workspaceId={workspace.id} workspaceName={workspace.name} role={workspace.role} workspaceType={workspace.type} />
                 )}
