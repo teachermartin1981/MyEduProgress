@@ -10,6 +10,7 @@ type Notice = { kind: 'error'|'success'; text: string } | null
 export default function ClassManagement({ workspaceId, workspaceName, role, workspaceType }: Props) {
   const [classes,setClasses]=useState<ClassRow[]>([])
   const [students,setStudents]=useState<StudentRow[]>([])
+  const [activeTeacherCount,setActiveTeacherCount]=useState(0)
   const [loading,setLoading]=useState(true)
   const [busy,setBusy]=useState(false)
   const [notice,setNotice]=useState<Notice>(null)
@@ -28,7 +29,7 @@ export default function ClassManagement({ workspaceId, workspaceName, role, work
   },[workspaceId])
   const load=useCallback(async()=>{
     setLoading(true)
-    try { const data=await call('list'); setClasses(data.classes||[]); setStudents(data.students||[]) }
+    try { const data=await call('list'); setClasses(data.classes||[]); setStudents(data.students||[]); setActiveTeacherCount(data.active_teacher_count||0) }
     catch(e){setNotice({kind:'error',text:e instanceof Error?e.message:'Could not load classes.'})}
     finally{setLoading(false)}
   },[call])
@@ -42,7 +43,7 @@ export default function ClassManagement({ workspaceId, workspaceName, role, work
   async function archiveClass(id:string){if(!window.confirm('Archive this class? Student records and history will be retained.'))return;setBusy(true);try{await call('archive_class',{class_id:id});setNotice({kind:'success',text:'Class archived. Student records have been retained.'});await load()}catch(e){setNotice({kind:'error',text:e instanceof Error?e.message:'Could not archive class.'})}finally{setBusy(false)}}
   return <div className="class-management">
     <div className="management-heading"><div><div className="student-kicker">{workspaceType==='school'?'SCHOOL ADMINISTRATION':'TEACHER WORKSPACE'}</div><h2>Classes & Students</h2><p>{workspaceName} · Manage your English classes and student records.</p></div><button className="management-refresh" onClick={load} title="Refresh"><RefreshCw size={16}/></button></div>
-    <div className="management-summary"><div><BookOpen size={19}/><span><b>{activeClasses.length}</b><small>Active classes</small></span></div><div><Users size={19}/><span><b>{students.filter(s=>s.status==='active').length}</b><small>Student records</small></span></div></div>
+    <div className="management-summary"><div><Users size={19}/><span><b>{activeTeacherCount}</b><small>Active teachers</small></span></div><div><BookOpen size={19}/><span><b>{activeClasses.length}</b><small>Active classes</small></span></div><div><Users size={19}/><span><b>{students.filter(s=>s.status==='active').length}</b><small>Student records</small></span></div></div>
     {notice&&<div className={'management-notice '+notice.kind}>{notice.text}</div>}
     {canManage&&<form className="create-class-form" onSubmit={createClass}><label>Create a class<input value={newClass} onChange={e=>setNewClass(e.target.value)} placeholder="e.g. M1/1" maxLength={120} required/></label><button className="primary-button" disabled={busy}><Plus size={17}/> Create class</button></form>}
     <div className="class-layout">
