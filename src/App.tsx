@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import StudentDashboard from './StudentDashboard'
 import { ArrowRight, BookOpenCheck, Building2, GraduationCap, LockKeyhole, Mail, ShieldCheck, Sparkles, UserPlus, LogOut, CheckCircle2 } from 'lucide-react'
 import { supabase } from './lib/supabase'
 
@@ -24,6 +25,7 @@ export default function App() {
   const [busy, setBusy] = useState(false)
   const [notice, setNotice] = useState<Notice>(null)
   const [workspace, setWorkspace] = useState<Workspace | null>(null)
+  const [showStudentPreview, setShowStudentPreview] = useState(false)
 
   async function handleStudentLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -144,6 +146,8 @@ export default function App() {
     await supabase.auth.signOut(); setWorkspace(null); setNotice({ kind: 'info', text: 'You have signed out.' })
   }
 
+  if (showStudentPreview) return <StudentDashboard onBack={() => setShowStudentPreview(false)} />
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -189,6 +193,7 @@ export default function App() {
                     <label>Personal Access Code<div className="input-wrap"><LockKeyhole size={17}/><input value={pac} onChange={e=>setPac(e.target.value)} type="password" placeholder="Enter your access code" required/></div></label>
                     <button className="primary-button">Student login <ArrowRight size={17}/></button>
                     <p className="form-help">Ask your teacher if you need help with your login details.</p>
+                    <button type="button" className="preview-link" onClick={() => setShowStudentPreview(true)}>Preview the student dashboard</button>
                   </form>
                 ) : (
                   <>
