@@ -83,3 +83,71 @@ footer{max-width:1160px;margin:auto;padding:22px 28px 28px;display:flex;justify-
 .workspace-next{display:flex;align-items:flex-start;gap:9px;background:#f3f7ff;border:1px solid #e3e9ff;border-radius:10px;padding:13px;color:#66718b;font-size:11px;line-height:1.6;margin-top:20px}
 .workspace-next svg{color:#5d70d7;flex-shrink:0;margin-top:1px}
 .notice.success{display:flex;align-items:center;gap:7px}
+
+
+.preview-link{display:block;margin:12px auto 0;border:0;background:transparent;color:#5367d4;font-size:11px;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.student-shell{min-height:100vh;background:#f6f8fc;color:#1d2945}
+.student-topbar{height:76px;padding:0 max(24px,calc((100% - 1080px)/2));display:flex;align-items:center;justify-content:space-between;background:#fff;border-bottom:1px solid #e9edf5}
+.student-back{display:flex;align-items:center;gap:8px;border:1px solid #e3e7f0;background:#fff;border-radius:9px;padding:9px 12px;color:#65718a;font-size:12px;font-weight:700}
+.student-main{max-width:1080px;margin:0 auto;padding:38px 24px 55px}
+.student-welcome{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+.student-kicker{font-size:10px;letter-spacing:1.4px;font-weight:800;color:#7b87a0}
+.student-welcome h1{font:800 34px/1.2 Manrope,sans-serif;letter-spacing:-1.5px;margin:9px 0 7px;color:#1d2945}
+.student-welcome h1 span{font-size:27px}
+.student-welcome p{margin:0;color:#7d879a;font-size:13px}
+.student-avatar{width:54px;height:54px;border-radius:17px;background:#eef1ff;color:#586bd7;display:grid;place-items:center}
+.student-summary{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:30px}
+.student-stat{display:flex;flex-direction:column;gap:5px;padding:19px 21px;border:1px solid #e7ebf3;border-radius:15px;background:#fff;box-shadow:0 5px 18px #25345b06}
+.student-stat span{font-size:11px;color:#77839a;font-weight:600}
+.student-stat strong{font:800 31px Manrope,sans-serif;color:#263452}
+.student-stat small{font-size:10px;color:#9aa3b3}
+.student-stat.level-stat{background:linear-gradient(120deg,#f0f2ff,#fff);border-color:#e0e5ff}
+.student-stat.level-stat strong{color:#5367d4}
+.student-section{margin-top:27px}
+.student-section-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.student-section-heading h2{font:800 18px Manrope,sans-serif;letter-spacing:-.4px;margin:0 0 4px;color:#263451}
+.student-section-heading p{font-size:11px;color:#8993a6;margin:0}
+.student-progress-card,.student-score-list,.student-task-list{background:#fff;border:1px solid #e7ebf3;border-radius:14px;padding:17px 19px}
+.skill-row+.skill-row{margin-top:14px}
+.skill-label{display:flex;justify-content:space-between;font-size:11px;margin-bottom:7px;color:#59667e}
+.skill-label strong{color:#354361}
+.skill-track{height:8px;background:#edf0f6;border-radius:20px;overflow:hidden}
+.skill-track span{display:block;height:100%;border-radius:20px;background:#6175dc}
+.preview-note{display:block;margin-top:15px;color:#9aa3b3;font-size:9px;line-height:1.5}
+.student-text-link{display:flex;align-items:center;color:#586bd2;font-size:11px;font-weight:700}
+.student-score{display:flex;justify-content:space-between;align-items:center;padding:11px 0}
+.student-score+.student-score{border-top:1px solid #edf0f5}
+.student-score strong,.student-score small{display:block}
+.student-score strong{font-size:12px;color:#394660}
+.student-score small{font-size:10px;color:#9aa3b3;margin-top:4px}
+.student-score b{font:800 17px Manrope,sans-serif;color:#2e3b59}
+.student-count{border-radius:20px;background:#eef1ff;color:#586bd2;padding:5px 9px;font-size:10px;font-weight:700}
+.student-task{display:flex;align-items:center;gap:12px;padding:10px 0}
+.student-task+.student-task{border-top:1px solid #edf0f5}
+.task-icon{width:36px;height:36px;border-radius:11px;background:#fff5e9;color:#cb8735;display:grid;place-items:center;flex-shrink:0}
+.task-content{flex:1;min-width:0}
+.task-content strong,.task-content small{display:block}
+.task-content strong{font-size:12px;color:#394660}
+.task-content small{font-size:10px;color:#929bad;margin-top:4px}
+.task-status{display:inline-block;margin-top:6px;font-size:9px;font-weight:700;padding:4px 7px;border-radius:5px}
+.task-status.pending{background:#fff4e5;color:#b87826}
+.task-status.progress{background:#edf2ff;color:#5268c6}
+.student-task>svg{color:#a4adbd}
+.student-journey-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.student-journey{background:#fff;border:1px solid #e7ebf3;border-radius:13px;overflow:hidden}
+.student-journey>button{display:flex;align-items:center;gap:11px;width:100%;padding:14px;border:0;background:transparent;text-align:left}
+.journey-icon{width:39px;height:39px;border-radius:12px;display:grid;place-items:center;flex-shrink:0}
+.journey-spelling{background:#edf4ff;color:#4e76c9}.journey-placement{background:#f4efff;color:#8a61c7}.journey-grammar{background:#fff6e8;color:#c28a34}.journey-reading{background:#eaf8f5;color:#319887}
+.journey-copy{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+.journey-copy strong{font-size:11px;color:#394660}
+.journey-copy small{font-size:9px;color:#929bad}
+.journey-copy em{font-style:normal;font-size:9px;color:#4f8b6b;font-weight:700;margin-top:2px}
+.journey-chevron{color:#a4adbd;transition:transform .2s}
+.student-journey.expanded .journey-chevron{transform:rotate(90deg)}
+.journey-detail{margin:0;padding:0 15px 14px 64px;color:#78849a;font-size:10px;line-height:1.6}
+.achievement-icon{color:#c28a34}
+.student-achievements{display:flex;flex-wrap:wrap;gap:9px;background:#fff;border:1px solid #e7ebf3;border-radius:13px;padding:16px}
+.student-achievements span{display:flex;align-items:center;gap:6px;border:1px solid #e8edf5;background:#fafbfe;border-radius:20px;padding:8px 11px;font-size:10px;font-weight:700;color:#69758d}
+.student-achievements svg{color:#c28a34}
+.student-preview-footer{display:flex;align-items:center;gap:8px;margin-top:30px;padding:12px 14px;border-radius:9px;background:#eef2fb;color:#78849a;font-size:10px;line-height:1.5}
+@media(max-width:650px){.student-topbar{height:66px;padding:0 17px}.student-main{padding:27px 17px 40px}.student-welcome h1{font-size:28px}.student-summary{gap:9px}.student-stat{padding:15px}.student-stat strong{font-size:26px}.student-journey-grid{grid-template-columns:1fr}.student-section-heading h2{font-size:16px}}
