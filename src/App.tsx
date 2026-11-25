@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import StudentDashboard from './StudentDashboard'
+import ClassManagement from './ClassManagement'
 import { ArrowRight, BookOpenCheck, Building2, GraduationCap, LockKeyhole, Mail, ShieldCheck, Sparkles, UserPlus, LogOut, CheckCircle2 } from 'lucide-react'
 import { supabase } from './lib/supabase'
 
@@ -176,7 +177,7 @@ export default function App() {
                     <p className="form-help">The school plan includes up to 100 active teacher accounts.</p>
                   </form>
                 ) : (
-                  <div className="workspace-next"><CheckCircle2 size={18}/><span>Your secure workspace is connected. Class management and assessment tools are the next modules to build.</span></div>
+                  <ClassManagement workspaceId={workspace.id} workspaceName={workspace.name} role={workspace.role} workspaceType={workspace.type} />
                 )}
                 <button className="secondary-button" onClick={signOut}><LogOut size={16}/> Sign out</button>
               </>
