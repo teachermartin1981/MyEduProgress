@@ -149,16 +149,17 @@ export default function App() {
 
   if (showStudentPreview) return <StudentDashboard onBack={() => setShowStudentPreview(false)} />
 
-  if (workspace) return (
+  const activeWorkspace = workspace as Workspace | null
+  if (activeWorkspace) return (
     <div className="workspace-shell">
       <header className="workspace-topbar">
         <a className="brand" href={import.meta.env.BASE_URL} aria-label="MyEduProgress home"><span className="brand-mark"><BookOpenCheck size={21} /></span><span>MyEdu<span>Progress</span></span></a>
-        <div className="workspace-user"><span>{workspace.name}</span><small>{workspace.role === 'owner' ? 'Workspace Owner' : workspace.role === 'admin' ? 'Administrator' : 'Teacher'}</small><button className="secondary-button" onClick={signOut}><LogOut size={16}/> Sign out</button></div>
+        <div className="workspace-user"><span>{activeWorkspace.name}</span><small>{activeWorkspace.role === 'owner' ? 'Workspace Owner' : activeWorkspace.role === 'admin' ? 'Administrator' : 'Teacher'}</small><button className="secondary-button" onClick={signOut}><LogOut size={16}/> Sign out</button></div>
       </header>
       <main className="workspace-main">
-        <div className="workspace-welcome"><div><div className="card-kicker">{workspace.type === 'school' ? 'SCHOOL WORKSPACE' : 'TEACHER WORKSPACE'}</div><h1>{workspace.name}</h1><p>Welcome back. Here's your learning workspace overview.</p></div><div className="workspace-avatar">{workspace.type === 'school' ? <Building2 size={25}/> : <GraduationCap size={25}/>}</div></div>
+        <div className="workspace-welcome"><div><div className="card-kicker">{activeWorkspace.type === 'school' ? 'SCHOOL WORKSPACE' : 'TEACHER WORKSPACE'}</div><h1>{activeWorkspace.name}</h1><p>Welcome back. Here's your learning workspace overview.</p></div><div className="workspace-avatar">{activeWorkspace.type === 'school' ? <Building2 size={25}/> : <GraduationCap size={25}/>}</div></div>
         {notice && <div className={`notice ${notice.kind}`} role="status">{notice.text}</div>}
-        {workspace.type === 'school' && ['owner','admin'].includes(workspace.role) && (
+        {activeWorkspace.type === 'school' && ['owner','admin'].includes(activeWorkspace.role) && (
           <section className="workspace-invite-panel">
             <form className="login-form invite-form" onSubmit={handleInviteTeacher}>
               <h3><UserPlus size={17}/> Invite a teacher</h3>
@@ -171,7 +172,7 @@ export default function App() {
             </form>
           </section>
         )}
-        <ClassManagement workspaceId={workspace.id} workspaceName={workspace.name} role={workspace.role} workspaceType={workspace.type} />
+        <ClassManagement workspaceId={activeWorkspace.id} workspaceName={activeWorkspace.name} role={activeWorkspace.role} workspaceType={activeWorkspace.type} />
       </main>
     </div>
   )
