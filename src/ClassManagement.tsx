@@ -5,12 +5,15 @@ import { Archive, BookOpen, ChevronRight, Plus, RefreshCw, Users, UserPlus, Uplo
 type Props = { workspaceId: string; workspaceName: string; role: 'owner'|'admin'|'teacher'; workspaceType: 'teacher'|'school' }
 type ClassRow = { id: string; name: string; active: boolean; academic_year_id: string | null }
 type StudentRow = { id: string; student_number: string; display_name: string; status: string; workspace_class_enrollments?: { id: string; class_id: string; ended_at: string | null; workspace_classes?: { name: string } | null }[] }
+type TeacherRow = { membership_id: string; user_id: string; full_name: string; assigned_classes: { id: string; name: string; active: boolean }[] }
 type Notice = { kind: 'error'|'success'; text: string } | null
 
 export default function ClassManagement({ workspaceId, workspaceName, role, workspaceType }: Props) {
   const [classes,setClasses]=useState<ClassRow[]>([])
   const [students,setStudents]=useState<StudentRow[]>([])
   const [activeTeacherCount,setActiveTeacherCount]=useState(0)
+  const [teachers,setTeachers]=useState<TeacherRow[]>([])
+  const [expandedTeacher,setExpandedTeacher]=useState('')
   const [loading,setLoading]=useState(true)
   const [busy,setBusy]=useState(false)
   const [notice,setNotice]=useState<Notice>(null)
@@ -29,7 +32,7 @@ export default function ClassManagement({ workspaceId, workspaceName, role, work
   },[workspaceId])
   const load=useCallback(async()=>{
     setLoading(true)
-    try { const data=await call('list'); setClasses(data.classes||[]); setStudents(data.students||[]); setActiveTeacherCount(data.active_teacher_count||0) }
+    try { const data=await call('list'); setClasses(data.classes||[]); setStudents(data.students||[]); setActiveTeacherCount(data.active_teacher_count||0); setTeachers(data.teachers||[]) }
     catch(e){setNotice({kind:'error',text:e instanceof Error?e.message:'Could not load classes.'})}
     finally{setLoading(false)}
   },[call])
@@ -45,6 +48,7 @@ export default function ClassManagement({ workspaceId, workspaceName, role, work
     <div className="management-heading"><div><div className="student-kicker">{workspaceType==='school'?'SCHOOL ADMINISTRATION':'TEACHER WORKSPACE'}</div><h2>Classes & Students</h2><p>{workspaceName} · Manage your English classes and student records.</p></div><button className="management-refresh" onClick={load} title="Refresh"><RefreshCw size={16}/></button></div>
     <div className="management-summary"><div><Users size={19}/><span><b>{activeTeacherCount}</b><small>Active teachers</small></span></div><div><BookOpen size={19}/><span><b>{activeClasses.length}</b><small>Active classes</small></span></div><div><Users size={19}/><span><b>{students.filter(s=>s.status==='active').length}</b><small>Student records</small></span></div></div>
     {notice&&<div className={'management-notice '+notice.kind}>{notice.text}</div>}
+    {workspaceType==='school'&&<section className="teacher-directory"><div className="teacher-directory-heading"><div><h3>School teachers</h3><p>Click a teacher to see their assigned classes.</p></div><span>{teachers.length} active</span></div>{loading?<p className="class-empty">Loading teachers…</p>:teachers.length===0?<p className="class-empty">No teachers have joined this school yet. Invite teachers above to get started.</p>:teachers.map(t=><div className="teacher-directory-item" key={t.membership_id}><button className="teacher-directory-toggle" onClick={()=>setExpandedTeacher(expandedTeacher===t.membership_id?'':t.membership_id)}><span className="teacher-avatar">{t.full_name.trim().charAt(0).toUpperCase()}</span><span className="teacher-name">{t.full_name}<small>{t.assigned_classes.length} assigned {t.assigned_classes.length===1?'class':'classes'}</small></span><ChevronRight className={expandedTeacher===t.membership_id?'teacher-chevron expanded':'teacher-chevron'} size={17}/></button>{expandedTeacher===t.membership_id&&<div className="teacher-assigned-classes">{t.assigned_classes.filter(x=>x.active).length? t.assigned_classes.filter(x=>x.active).map(cls=><span key={cls.id}>{cls.name}</span>):<p>No classes assigned yet.</p>}</div>}</div>)}</section>}
     {canManage&&<form className="create-class-form" onSubmit={createClass}><label>Create a class<input value={newClass} onChange={e=>setNewClass(e.target.value)} placeholder="e.g. M1/1" maxLength={120} required/></label><button className="primary-button" disabled={busy}><Plus size={17}/> Create class</button></form>}
     <div className="class-layout">
       <aside className="class-sidebar"><div className="class-sidebar-title">YOUR CLASSES <span>{activeClasses.length}</span></div>{loading?<p className="class-empty">Loading classes…</p>:activeClasses.length===0?<p className="class-empty">No classes yet. Create your first class above.</p>:activeClasses.map(c=><button key={c.id} className={'class-choice '+(currentClass?.id===c.id?'selected':'')} onClick={()=>{setSelectedClass(c.id);setShowAdd(false);setShowBulk(false)}}><span>{c.name}</span><ChevronRight size={16}/></button>)}
