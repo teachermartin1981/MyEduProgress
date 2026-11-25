@@ -149,6 +149,33 @@ export default function App() {
 
   if (showStudentPreview) return <StudentDashboard onBack={() => setShowStudentPreview(false)} />
 
+  if (workspace) return (
+    <div className="workspace-shell">
+      <header className="workspace-topbar">
+        <a className="brand" href={import.meta.env.BASE_URL} aria-label="MyEduProgress home"><span className="brand-mark"><BookOpenCheck size={21} /></span><span>MyEdu<span>Progress</span></span></a>
+        <div className="workspace-user"><span>{workspace.name}</span><small>{workspace.role === 'owner' ? 'Workspace Owner' : workspace.role === 'admin' ? 'Administrator' : 'Teacher'}</small><button className="secondary-button" onClick={signOut}><LogOut size={16}/> Sign out</button></div>
+      </header>
+      <main className="workspace-main">
+        <div className="workspace-welcome"><div><div className="card-kicker">{workspace.type === 'school' ? 'SCHOOL WORKSPACE' : 'TEACHER WORKSPACE'}</div><h1>{workspace.name}</h1><p>Welcome back. Here's your learning workspace overview.</p></div><div className="workspace-avatar">{workspace.type === 'school' ? <Building2 size={25}/> : <GraduationCap size={25}/>}</div></div>
+        {notice && <div className={`notice ${notice.kind}`} role="status">{notice.text}</div>}
+        {workspace.type === 'school' && ['owner','admin'].includes(workspace.role) && (
+          <section className="workspace-invite-panel">
+            <form className="login-form invite-form" onSubmit={handleInviteTeacher}>
+              <h3><UserPlus size={17}/> Invite a teacher</h3>
+              <div className="workspace-invite-fields">
+                <label>Teacher's full name<input value={inviteName} onChange={e=>setInviteName(e.target.value)} placeholder="Teacher name" required/></label>
+                <label>Teacher's email<div className="input-wrap"><Mail size={17}/><input type="email" value={inviteEmail} onChange={e=>setInviteEmail(e.target.value)} placeholder="teacher@school.com" required/></div></label>
+                <button className="primary-button" disabled={busy}>{busy ? 'Sending…' : 'Send invitation'} <ArrowRight size={17}/></button>
+              </div>
+              <p className="form-help">The school plan includes up to 100 active teacher accounts.</p>
+            </form>
+          </section>
+        )}
+        <ClassManagement workspaceId={workspace.id} workspaceName={workspace.name} role={workspace.role} workspaceType={workspace.type} />
+      </main>
+    </div>
+  )
+
   return (
     <div className="app-shell">
       <header className="topbar">
