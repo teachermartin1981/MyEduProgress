@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { supabase } from './lib/supabase'
-import { Archive, BookOpen, ChevronDown, ChevronRight, Plus, RefreshCw, Users, UserPlus, Upload, X } from 'lucide-react'
+import { Archive, BookOpen, ChevronRight, Plus, RefreshCw, Users, UserPlus, Upload, X } from 'lucide-react'
 
 type Props = { workspaceId: string; workspaceName: string; role: 'owner'|'admin'|'teacher'; workspaceType: 'teacher'|'school' }
 type ClassRow = { id: string; name: string; active: boolean; academic_year_id: string | null }
