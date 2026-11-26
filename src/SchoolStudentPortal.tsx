@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { BookOpenCheck, LogOut, GraduationCap, ShieldCheck } from 'lucide-react'
 import SpellingJourney from './SpellingJourney'
 
@@ -9,7 +8,6 @@ type Student = {
 type Props = { student: Student; sessionToken: string; onSignOut: () => void }
 
 export default function SchoolStudentPortal({ student, sessionToken, onSignOut }: Props) {
-  const [message] = useState('Your school login is active. Learning activities will appear here as they are connected to your student account.')
   return <div className="student-portal-shell">
     <header className="workspace-topbar">
       <a className="brand" href={import.meta.env.BASE_URL}><span className="brand-mark"><BookOpenCheck size={21}/></span><span>MyEdu<span>Progress</span></span></a>
