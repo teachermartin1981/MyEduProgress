@@ -19,6 +19,9 @@ export default function ClassManagement({ workspaceId, workspaceName, role, work
   const [busy,setBusy]=useState(false)
   const [notice,setNotice]=useState<Notice>(null)
   const [newClass,setNewClass]=useState('')
+  const [renameValue,setRenameValue]=useState('')
+  const [showRename,setShowRename]=useState(false)
+  const [moveTargets,setMoveTargets]=useState<Record<string,string>>({})
   const [selectedClass,setSelectedClass]=useState('')
   const [studentNumber,setStudentNumber]=useState('')
   const [studentName,setStudentName]=useState('')
@@ -45,6 +48,21 @@ export default function ClassManagement({ workspaceId, workspaceName, role, work
   const currentClass=activeClasses.find(c=>c.id===selectedClass) || activeClasses[0]
   const classStudents=useMemo(()=>students.filter(s=>s.workspace_class_enrollments?.some(e=>e.ended_at===null && e.class_id===currentClass?.id)),[students,currentClass])
   async function createClass(e:React.FormEvent){e.preventDefault();if(!newClass.trim())return;setBusy(true);setNotice(null);try{const d=await call('create_class',{name:newClass.trim()});setNewClass('');setSelectedClass(d.class.id);setNotice({kind:'success',text:'Class created.'});await load()}catch(e){setNotice({kind:'error',text:e instanceof Error?e.message:'Could not create class.'})}finally{setBusy(false)}}
+  async function renameClass(e:React.FormEvent){
+    e.preventDefault();if(!currentClass||!renameValue.trim())return;setBusy(true);setNotice(null)
+    try{await call('rename_class',{class_id:currentClass.id,name:renameValue.trim()});setShowRename(false);setNotice({kind:'success',text:'Class name updated. Student records and history are unchanged.'});await load()}
+    catch(e){setNotice({kind:'error',text:e instanceof Error?e.message:'Could not rename class.'})}
+    finally{setBusy(false)}
+  }
+  async function moveStudent(student:StudentRow){
+    const target=moveTargets[student.id];if(!target||!currentClass)return
+    const targetName=activeClasses.find(c=>c.id===target)?.name||'the selected class'
+    if(!window.confirm('Move '+student.display_name+' to '+targetName+'? Their student record, access code and assessment history will be kept.'))return
+    setBusy(true);setNotice(null)
+    try{await call('move_student',{student_id:student.id,class_id:target});setMoveTargets(old=>({...old,[student.id]:''}));setNotice({kind:'success',text:student.display_name+' moved to '+targetName+'. Previous class history has been retained.'});await load()}
+    catch(e){setNotice({kind:'error',text:e instanceof Error?e.message:'Could not transfer student.'})}
+    finally{setBusy(false)}
+  }
 
   async function loadAccessCodes(classId=currentClass?.id){
     if(!classId)return;setAccessBusy(true);setNotice(null)
@@ -95,13 +113,14 @@ export default function ClassManagement({ workspaceId, workspaceName, role, work
       <aside className="class-sidebar"><div className="class-sidebar-title">YOUR CLASSES <span>{activeClasses.length}</span></div>{loading?<p className="class-empty">Loading classes…</p>:activeClasses.length===0?<p className="class-empty">No classes yet. Create your first class above.</p>:activeClasses.map(c=><button key={c.id} className={'class-choice '+(currentClass?.id===c.id?'selected':'')} onClick={()=>{setSelectedClass(c.id);setShowAdd(false);setShowBulk(false)}}><span>{c.name}</span><ChevronRight size={16}/></button>)}
         {classes.some(c=>!c.active)&&<div className="archived-label">{classes.filter(c=>!c.active).length} archived classes</div>}
       </aside>
-      <section className="class-detail">{currentClass?<><div className="class-detail-heading"><div><h3>{currentClass.name}</h3><p>{classStudents.length} currently enrolled</p></div>{canManage&&<button className="archive-class" onClick={()=>archiveClass(currentClass.id)} disabled={busy}><Archive size={14}/> Archive</button>}</div>
+      <section className="class-detail">{currentClass?<><div className="class-detail-heading"><div><h3>{currentClass.name}</h3><p>{classStudents.length} currently enrolled</p></div>{canManage&&<div className="class-heading-actions"><button className="archive-class" onClick={()=>{setRenameValue(currentClass.name);setShowRename(!showRename)}} disabled={busy}>Rename</button><button className="archive-class" onClick={()=>archiveClass(currentClass.id)} disabled={busy}><Archive size={14}/> Archive</button></div>}</div>
+        {showRename&&<form className="rename-class-form" onSubmit={renameClass}><label>New class name<input value={renameValue} onChange={e=>setRenameValue(e.target.value)} maxLength={120} required/></label><button className="primary-button" disabled={busy}>Save name</button><button type="button" className="cancel-inline" onClick={()=>setShowRename(false)}><X size={15}/></button></form>}
         {canManage&&<div className="student-actions"><button onClick={()=>{setShowAdd(!showAdd);setShowBulk(false)}}><UserPlus size={15}/> Add student</button><button onClick={()=>{setShowBulk(!showBulk);setShowAdd(false)}}><Upload size={15}/> Bulk import</button><button onClick={()=>loadAccessCodes()} disabled={accessBusy}><KeyRound size={15}/> {accessBusy?'Loading…':'Access codes'}</button></div>}
         {showAdd&&<form className="student-entry-form" onSubmit={addStudent}><label>Student number<input value={studentNumber} onChange={e=>setStudentNumber(e.target.value)} required/></label><label>Student name<input value={studentName} onChange={e=>setStudentName(e.target.value)} required/></label><div><button className="primary-button" disabled={busy}>{busy?'Saving…':'Add student'}</button><button type="button" className="cancel-inline" onClick={()=>setShowAdd(false)}><X size={15}/></button></div></form>}
 
         {showAccessCodes&&<section className="access-code-panel"><div className="access-code-heading"><div><h4>Student Personal Access Codes</h4><p>Keep these codes confidential. Give each student only their own code.</p></div><div><button type="button" onClick={()=>generateMissingPacs()} disabled={accessBusy}><KeyRound size={15}/> Generate missing</button><button type="button" onClick={()=>printCodes()} disabled={!accessCodes.length}><Printer size={15}/> Print class list</button><button type="button" onClick={()=>setShowAccessCodes(false)}><X size={15}/></button></div></div><div className="access-code-table-wrap"><table className="student-table"><thead><tr><th>Student ID</th><th>Student name</th><th>Personal Access Code</th><th>Actions</th></tr></thead><tbody>{accessCodes.map(a=><tr key={a.id}><td>{a.student_number}</td><td>{a.display_name}</td><td><strong className="pac-value">{a.pac||'Not generated'}</strong></td><td><button className="pac-action" onClick={()=>printCodes(a)} title="Print this student"><Printer size={14}/></button><button className="pac-action" onClick={()=>resetPac(a.id)} disabled={accessBusy} title="Generate a new code"><RotateCcw size={14}/></button></td></tr>)}</tbody></table></div></section>}
         {showBulk&&<form className="bulk-entry-form" onSubmit={bulkAdd}><label>Paste student number and name — one student per line<textarea value={bulkText} onChange={e=>setBulkText(e.target.value)} placeholder={'422, Chao\n426, Maprom\n427, Mali'} rows={6} required/></label><small>Use a comma or tab between the student number and name. Maximum 500 students per import.</small><div><button className="primary-button" disabled={busy}>{busy?'Importing…':'Import students'}</button><button type="button" className="cancel-inline" onClick={()=>setShowBulk(false)}><X size={15}/></button></div></form>}
-        <div className="student-table-wrap"><table className="student-table"><thead><tr><th>Student ID</th><th>Student name</th><th>Status</th></tr></thead><tbody>{classStudents.map(s=><tr key={s.id}><td>{s.student_number}</td><td>{s.display_name}</td><td><span className="active-student">Active</span></td></tr>)}</tbody></table>{classStudents.length===0&&<div className="class-empty">No students in this class yet. Add students individually or import a list.</div>}</div>
+        <div className="student-table-wrap"><table className="student-table"><thead><tr><th>Student ID</th><th>Student name</th><th>Status</th>{canManage&&<th>Transfer class</th>}</tr></thead><tbody>{classStudents.map(s=>{const previous=(s.workspace_class_enrollments||[]).filter(e=>e.ended_at!==null&&e.workspace_classes?.name).map(e=>e.workspace_classes!.name);return <tr key={s.id}><td>{s.student_number}</td><td>{s.display_name}{previous.length>0&&<small className="student-previous-classes">Previous: {Array.from(new Set(previous)).join(', ')}</small>}</td><td><span className="active-student">Active</span></td>{canManage&&<td><div className="student-transfer-control"><select value={moveTargets[s.id]||''} onChange={e=>setMoveTargets(old=>({...old,[s.id]:e.target.value}))}><option value="">Move to…</option>{activeClasses.filter(c=>c.id!==currentClass.id).map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select><button type="button" className="transfer-student-button" disabled={!moveTargets[s.id]||busy} onClick={()=>moveStudent(s)}>Move</button></div></td>}</tr>})}</tbody></table>{classStudents.length===0&&<div className="class-empty">No students in this class yet. Add students individually or import a list.</div>}</div>
       </>:<div className="class-empty large">Select a class or create your first one.</div>}</section>
     </div>
   </div>
