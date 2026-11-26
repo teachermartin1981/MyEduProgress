@@ -17,7 +17,7 @@ const categories:{code:Category;label:string;icon:any;description:string}[]=[
 const skillCodes:Category[]=['writing','reading','listening','spelling','grammar','speaking']
 const levels=['Pre-A1','A1','A2','B1','B2','C1','C2']
 
-export default function ActivityManager({workspaceId,role}:Props){
+export default function ActivityManager({workspaceId}:Props){
  const [activities,setActivities]=useState<Activity[]>([])
  const [loading,setLoading]=useState(true),[busy,setBusy]=useState(false)
  const [notice,setNotice]=useState<{kind:'error'|'success';text:string}|null>(null)
