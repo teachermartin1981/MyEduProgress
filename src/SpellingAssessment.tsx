@@ -11,7 +11,7 @@ type Result = {
   answers: { question_number: number; submitted_answer: string; correct_answer: string; is_correct: boolean }[];
   unlocked_list: { title: string; grade_label: string; list_number: number } | null;
 }
-type Props = { list: ListInfo; onBack: () => void }
+type Props = { list: ListInfo; onBack: () => void; studentSessionToken?: string }
 
 function playSequence(question: Question) {
   if (!('speechSynthesis' in window)) return
@@ -29,7 +29,7 @@ function playSequence(question: Question) {
   next()
 }
 
-export default function SpellingAssessment({ list, onBack }: Props) {
+export default function SpellingAssessment({ list, onBack, studentSessionToken }: Props) {
   const [attemptId, setAttemptId] = useState('')
   const [questions, setQuestions] = useState<Question[]>([])
   const [index, setIndex] = useState(0)
@@ -44,7 +44,7 @@ export default function SpellingAssessment({ list, onBack }: Props) {
 
   useEffect(() => {
     let active = true
-    supabase.functions.invoke('spelling-assessment', { body: { action: 'start_test', list_id: list.id } })
+    supabase.functions.invoke('spelling-assessment', { body: { action: 'start_test', list_id: list.id, ...(studentSessionToken ? { session_token: studentSessionToken } : {}) } })
       .then(({ data, error: invokeError }) => {
         if (!active) return
         if (invokeError || data?.error) setError(data?.error || invokeError.message || 'The assessment could not be started.')
@@ -80,7 +80,7 @@ export default function SpellingAssessment({ list, onBack }: Props) {
     const all = [...saved.filter(x => x.question_number !== index + 1), snapshot()]
     setSubmitting(true); setError('')
     const { data, error: invokeError } = await supabase.functions.invoke('spelling-assessment', {
-      body: { action: 'submit_test', attempt_id: attemptId, answers: all },
+      body: { action: 'submit_test', attempt_id: attemptId, answers: all, ...(studentSessionToken ? { session_token: studentSessionToken } : {}) },
     })
     setSubmitting(false)
     if (invokeError || data?.error) { setError(data?.error || invokeError.message || 'Your answers could not be submitted.'); return }
