@@ -344,3 +344,22 @@ footer{max-width:1160px;margin:auto;padding:22px 28px 28px;display:flex;justify-
 .independent-plan-option p{margin:0;color:#7c879b;font-size:10px;line-height:1.6}
 .independent-plan-option em{display:inline-block;margin-top:9px;color:#586bd4;font-size:10px;font-style:normal;font-weight:800}
 @media(max-width:600px){.independent-plan-grid{grid-template-columns:1fr}}
+
+/* Data-driven spelling curriculum cards */
+.spelling-journey-panel{margin-bottom:13px;padding:18px;background:#fff;border:1px solid #e3e8f2;border-radius:14px}
+.spelling-journey-heading h3{display:flex;align-items:center;gap:8px;margin:7px 0 4px;color:#263451;font:800 17px Manrope,sans-serif}
+.spelling-journey-heading h3 svg{color:#536bd4}
+.spelling-journey-heading p{margin:0;color:#8993a6;font-size:11px}
+.spelling-state{display:flex;align-items:center;gap:8px;padding:18px 2px;color:#8792a7;font-size:11px;line-height:1.6}
+.spelling-state.error{color:#b3433b}
+.spelling-list-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}
+.spelling-list-card{padding:13px;border:1px solid #e9edf5;border-radius:11px;background:#fbfcff;min-width:0}
+.spelling-list-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#5367d4;font-size:10px;font-weight:800}
+.spelling-list-card-top small{color:#8d97aa;font-weight:600}
+.spelling-list-card>strong{display:block;margin:9px 0;color:#35415c;font-size:12px}
+.spelling-list-count{margin-bottom:7px;color:#8590a4;font-size:10px}
+.spelling-list-count b{color:#35415c}
+.spelling-list-foot{display:flex;align-items:center;gap:5px;margin-top:8px;color:#8a95a8;font-size:9px}
+.spelling-list-foot svg{color:#29915e}
+.spelling-journey-note{margin:13px 0 0;color:#9aa3b3;font-size:9px;line-height:1.5}
+@media(max-width:600px){.spelling-list-grid{grid-template-columns:1fr}}
