@@ -178,7 +178,7 @@ export default function App() {
     await supabase.auth.signOut(); setWorkspace(null); setIndependentUser(null); setNotice({ kind: 'info', text: 'You have signed out.' })
   }
 
-  if (independentUser) return <IndependentStudentPortal userId={independentUser.id} displayName={independentUser.displayName} onSignOut={signOut} />
+  if (independentUser) return <IndependentStudentPortal displayName={independentUser.displayName} onSignOut={signOut} />
 
   if (showStudentPreview) return <StudentDashboard onBack={() => setShowStudentPreview(false)} />
 
