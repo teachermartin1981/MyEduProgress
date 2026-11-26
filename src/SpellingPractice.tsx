@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ArrowLeft, ArrowRight, CheckCircle2, Eye, EyeOff, Headphones, RotateCcw, Volume2 } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle2, Eye, EyeOff, Headphones, RotateCcw, Volume2, ChevronDown, ChevronUp } from 'lucide-react'
 import { supabase } from './lib/supabase'
 import SpellingAssessment from './SpellingAssessment'
 
@@ -17,16 +17,18 @@ type Props = {
   studentSessionToken?: string
 }
 
-function speak(text: string, rate = 0.86) {
+function speak(text: string, voiceURI = '') {
   if (!('speechSynthesis' in window)) return
   window.speechSynthesis.cancel()
   const utterance = new SpeechSynthesisUtterance(text)
-  utterance.rate = rate
-  utterance.lang = 'en-US'
+  const voice = window.speechSynthesis.getVoices().find(item => item.voiceURI === voiceURI)
+  if (voice) { utterance.voice = voice; utterance.lang = voice.lang }
+  else utterance.lang = 'en-GB'
+  utterance.rate = 0.86
   window.speechSynthesis.speak(utterance)
 }
 
-function speakSequence(parts: string[]) {
+function speakSequence(parts: string[], voiceURI = '') {
   if (!('speechSynthesis' in window)) return
   window.speechSynthesis.cancel()
   const queue = [...parts]
@@ -34,8 +36,10 @@ function speakSequence(parts: string[]) {
     const text = queue.shift()
     if (!text) return
     const utterance = new SpeechSynthesisUtterance(text)
+    const voice = window.speechSynthesis.getVoices().find(item => item.voiceURI === voiceURI)
+    if (voice) { utterance.voice = voice; utterance.lang = voice.lang }
+    else utterance.lang = 'en-GB'
     utterance.rate = 0.88
-    utterance.lang = 'en-US'
     utterance.onend = playNext
     window.speechSynthesis.speak(utterance)
   }
@@ -51,6 +55,9 @@ export default function SpellingPractice({ list, onBack, studentSessionToken }: 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [assessmentMode, setAssessmentMode] = useState(false)
+  const [showContext, setShowContext] = useState(false)
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([])
+  const [voiceURI, setVoiceURI] = useState(() => { try { return localStorage.getItem('eduassess-spelling-voice') || '' } catch { return '' } })
 
   useEffect(() => {
     let active = true
@@ -76,11 +83,11 @@ export default function SpellingPractice({ list, onBack, studentSessionToken }: 
   const accepted = useMemo(() => current ? [current.word, ...(current.accepted_spellings || [])].map(x => x.trim().toLocaleLowerCase()) : [], [current])
   const isCorrect = accepted.includes(answer.trim().toLocaleLowerCase())
 
-  if (assessmentMode) return <SpellingAssessment list={list} studentSessionToken={studentSessionToken} onBack={() => setAssessmentMode(false)} />
+  if (assessmentMode) return <SpellingAssessment list={list} studentSessionToken={studentSessionToken} voiceURI={voiceURI} onBack={() => setAssessmentMode(false)} />
 
   function replay() {
     if (!current) return
-    speakSequence([current.word, current.context_sentence, 'Write down the word.', current.word])
+    speakSequence([current.word, current.context_sentence, 'Write down the word.', current.word], voiceURI)
   }
 
   function next() {
@@ -123,6 +130,7 @@ export default function SpellingPractice({ list, onBack, studentSessionToken }: 
         {!checked ? <button className="primary-button" type="submit" disabled={!answer.trim()}>Check spelling <CheckCircle2 size={17}/></button> : <div className={isCorrect ? 'spelling-feedback correct' : 'spelling-feedback retry'}>{isCorrect ? 'Correct! Well done.' : 'Not quite. Listen again and have another try.'}{!isCorrect && <button type="button" onClick={() => { setAnswer(''); setChecked(false) }}>Try again</button>}</div>}
       </form>
       {words.length >= 25 && <div className="spelling-assessment-launch"><div><strong>Ready to test your spelling?</strong><p>25 random words · 24 correct answers needed to pass</p></div><button className="primary-button" onClick={() => setAssessmentMode(true)}>Take mastery test <ArrowRight size={16}/></button></div>}
+      <div className="spelling-voice-setting"><label htmlFor="spelling-voice-select">Pronunciation accent</label><select id="spelling-voice-select" value={voiceURI} onChange={event => setVoiceURI(event.target.value)} disabled={!voices.length}><option value="">Default English voice</option>{voices.map(voice => <option key={voice.voiceURI} value={voice.voiceURI}>{voice.name} ({voice.lang})</option>)}</select></div>
       <div className="spelling-practice-nav">
         <button className="secondary-button" onClick={previous} disabled={index === 0}>Previous</button>
         <span>{index + 1} / {words.length}</span>
