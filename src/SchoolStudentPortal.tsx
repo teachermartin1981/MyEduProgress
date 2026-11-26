@@ -26,6 +26,11 @@ export default function SchoolStudentPortal({student,sessionToken,onSignOut}:Pro
   <main className="workspace-main student-home-main">
   {section==='home'?<>
    <section className="workspace-welcome student-welcome"><div><div className="card-kicker">STUDENT DASHBOARD</div><h1>Welcome, {student.display_name}</h1><p>{student.workspace_name}</p><div className="student-profile-details"><div><span>Student ID</span><strong>{student.student_number}</strong></div><div><span>Class</span><strong>{student.class_name||'Not assigned'}</strong></div></div></div><div className="workspace-avatar"><GraduationCap size={25}/></div></section>
+   <section className="student-cefr-card">
+    <div className="student-cefr-main"><div><span className="student-card-kicker">ENGLISH PROGRESS</span><h2>Your English Level</h2><p>Based on your results across the five English skill areas.</p></div><div className="student-cefr-score"><strong>—</strong><span>/ 100</span><em>Not assessed yet</em></div></div>
+    <div className="student-cefr-scale" aria-label="CEFR levels from A1 to C2">{['A1','A2','B1','B2','C1','C2'].map((level,i)=><div className="student-cefr-step" key={level}><span>{level}</span><small>{['Beginner','Elementary','Intermediate','Upper intermediate','Advanced','Proficient'][i]}</small></div>)}</div>
+    <div className="student-cefr-footer"><span><BarChart3 size={16}/> Your next target will appear after your first assessment.</span><span>5 skill areas</span></div>
+   </section>
    <section className="student-home-section"><div className="student-home-section-heading"><div><h2>My Learning</h2><p>Choose a subject to continue learning.</p></div></div>
     <div className="student-learning-grid">{journeys.map(item=>{const Icon=item.icon;return <button key={item.id} className="student-learning-card" onClick={()=>item.id==='spelling'?setSection('spelling'):setNotice(item.title+' activities are being prepared and will appear here soon.')}><span className={'student-learning-icon '+item.tone}><Icon size={23}/></span><span className="student-learning-copy"><strong>{item.title}</strong><small>{item.subtitle}</small><em>{item.status}</em></span><ChevronRight size={19} className="student-learning-arrow"/></button>})}</div>
     {notice&&<div className="student-coming-notice">{notice}<button onClick={()=>setNotice('')}>Dismiss</button></div>}
