@@ -65,6 +65,16 @@ export default function IndependentStudentPortal({ displayName, onSignOut }: Pro
         <div className="independent-features"><span>CEFR placement</span><span>Grammar</span><span>Reading &amp; listening</span><span>Spelling &amp; vocabulary</span><span>Writing feedback</span><span>Progress history</span></div>
       </section>
       <section className="independent-card">
+        <div className="card-kicker">INDEPENDENT STUDENT MEMBERSHIP</div>
+        <h2 className="independent-plan-title">Choose your learning plan</h2>
+        <p className="independent-plan-subtitle">Your account is ready. Subscription checkout will be connected later; these are the planned membership prices.</p>
+        <div className="independent-plan-grid">
+          <div className="independent-plan-option"><span>MONTHLY</span><strong>$3.99<small>/ month</small></strong><p>Flexible monthly access to your English learning activities and progress.</p></div>
+          <div className="independent-plan-option featured"><span>ANNUAL</span><strong>$39.90<small>/ year</small></strong><p>Full-year access at a lower cost than paying monthly.</p><em>Save about 17%</em></div>
+        </div>
+        <p className="independent-footnote">No payment is collected yet. Your membership plan will be selectable when checkout is introduced.</p>
+      </section>
+      <section className="independent-card">
         <div className="independent-card-heading"><div><div className="card-kicker">OPTIONAL · PRIVATE ACCESS</div><h2>Invite a teacher or tutor</h2><p>Give someone you trust read-only access to your progress. You can revoke access at any time.</p></div><UserPlus size={26}/></div>
         <form className="independent-invite-form" onSubmit={createInvite}>
           <label>Teacher or tutor email address<div className="input-wrap"><Mail size={17}/><input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="teacher@example.com" required/></div></label>
