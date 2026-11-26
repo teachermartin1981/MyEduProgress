@@ -3,6 +3,7 @@ import StudentDashboard from './StudentDashboard'
 import ClassManagement from './ClassManagement'
 import ActivityManager from './ActivityManager'
 import IndependentStudentPortal from './IndependentStudentPortal'
+import TeacherSpellingReports from './TeacherSpellingReports'
 import { ArrowRight, BookOpenCheck, Building2, GraduationCap, LockKeyhole, Mail, ShieldCheck, Sparkles, UserPlus, LogOut, CheckCircle2 } from 'lucide-react'
 import { supabase } from './lib/supabase'
 
@@ -218,6 +219,7 @@ export default function App() {
           </section>
         )}
         <ClassManagement workspaceId={activeWorkspace.id} workspaceName={activeWorkspace.name} role={activeWorkspace.role} workspaceType={activeWorkspace.type} />
+        <TeacherSpellingReports workspaceId={activeWorkspace.id} />
         <ActivityManager workspaceId={activeWorkspace.id} role={activeWorkspace.role} />
       </main>
     </div>
