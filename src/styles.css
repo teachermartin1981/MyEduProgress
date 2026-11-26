@@ -285,3 +285,12 @@ footer{max-width:1160px;margin:auto;padding:22px 28px 28px;display:flex;justify-
 .activity-card-actions button,.management-refresh{height:32px;width:32px;display:grid;place-items:center;border:1px solid #e5e9f1;border-radius:8px;background:#fff;color:#69758d}
 .activity-card-actions button:hover,.management-refresh:hover{background:#f2f4ff;color:#5367d2}
 @media(max-width:700px){.activity-manager{padding:18px}.activity-heading{align-items:flex-start;flex-direction:column}.activity-category-grid{grid-template-columns:1fr}.activity-form-row{grid-template-columns:1fr}.activity-card{flex-wrap:wrap}.activity-card-actions{margin-left:50px}.activity-list-heading{align-items:flex-start;flex-direction:column}.activity-list-tools{width:100%}.activity-list-tools select{flex:1}}
+
+.access-code-panel{margin:16px 0;padding:16px;border:1px solid #dfe5f0;border-radius:13px;background:#fbfcff}
+.access-code-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.access-code-heading h4{margin:0;color:#26334e;font-size:14px}.access-code-heading p{margin:4px 0 0;color:#7b879a;font-size:11px}
+.access-code-heading>div:last-child{display:flex;gap:7px}
+.access-code-heading button,.pac-action{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid #dfe5ef;background:#fff;color:#5366c9;border-radius:8px;padding:7px 9px;font-size:11px}
+.access-code-table-wrap{overflow-x:auto}.pac-value{font-family:ui-monospace,monospace;letter-spacing:1.5px;color:#25345b;background:#eef2ff;padding:5px 8px;border-radius:6px;white-space:nowrap}
+.pac-action{width:29px;height:29px;padding:0;margin-right:4px}
+@media(max-width:650px){.access-code-heading{align-items:flex-start;flex-direction:column}}
