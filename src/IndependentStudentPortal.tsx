@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { ArrowRight, BookOpenCheck, GraduationCap, LogOut, Mail, ShieldCheck, UserPlus, XCircle } from 'lucide-react'
 import { supabase } from './lib/supabase'
+import SpellingJourney from './SpellingJourney'
 
 type Props = { displayName: string; onSignOut: () => void }
 type Tutor = { id: string; tutor_user_id: string; permission: string; active: boolean; created_at: string; invite?: { tutor_email?: string } | null }
@@ -61,8 +62,12 @@ export default function IndependentStudentPortal({ displayName, onSignOut }: Pro
       <div className="workspace-welcome"><div><div className="card-kicker">INDEPENDENT STUDENT ACCOUNT</div><h1>Welcome, {displayName}</h1><p>Your personal English learning space.</p></div><div className="workspace-avatar"><GraduationCap size={25}/></div></div>
       {notice && <div className={`notice ${notice.kind}`} role="status">{notice.text}</div>}
       <section className="independent-card">
-        <div className="independent-card-heading"><div><div className="card-kicker">YOUR LEARNING SPACE</div><h2>Start building your English progress</h2><p>Your account is ready. Learning activities, CEFR placement and live progress will be connected to this dashboard in the next development stage.</p></div><ShieldCheck size={27}/></div>
+        <div className="independent-card-heading"><div><div className="card-kicker">YOUR LEARNING SPACE</div><h2>Start building your English progress</h2><p>Your personal learning dashboard. Your published spelling levels will appear below; placement and additional learning journeys will be added as they are connected.</p></div><ShieldCheck size={27}/></div>
         <div className="independent-features"><span>CEFR placement</span><span>Grammar</span><span>Reading &amp; listening</span><span>Spelling &amp; vocabulary</span><span>Writing feedback</span><span>Progress history</span></div>
+      </section>
+      <section className="independent-card">
+        <div className="independent-card-heading"><div><div className="card-kicker">SPELLING &amp; VOCABULARY</div><h2>Your spelling journey</h2><p>Work through the available levels at your own pace.</p></div><BookOpenCheck size={26}/></div>
+        <SpellingJourney />
       </section>
       <section className="independent-card">
         <div className="card-kicker">INDEPENDENT STUDENT MEMBERSHIP</div>
