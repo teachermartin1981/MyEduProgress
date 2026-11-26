@@ -1,4 +1,4 @@
-import { BookOpenCheck, LogOut, GraduationCap, ShieldCheck } from 'lucide-react'
+import { BookOpenCheck, LogOut, GraduationCap } from 'lucide-react'
 import SpellingJourney from './SpellingJourney'
 
 type Student = {
@@ -14,22 +14,20 @@ export default function SchoolStudentPortal({ student, sessionToken, onSignOut }
       <div className="workspace-user"><span>{student.display_name}</span><small>School student</small><button className="secondary-button" onClick={onSignOut}><LogOut size={16}/> Sign out</button></div>
     </header>
     <main className="workspace-main">
-      <section className="workspace-welcome">
-        <div><div className="card-kicker">STUDENT DASHBOARD</div><h1>Welcome, {student.display_name}</h1><p>{student.workspace_name}</p></div>
+      <section className="workspace-welcome student-welcome">
+        <div>
+          <div className="card-kicker">STUDENT DASHBOARD</div>
+          <h1>Welcome, {student.display_name}</h1>
+          <p>{student.workspace_name}</p>
+          <div className="student-profile-details">
+            <div><span>Student ID</span><strong>{student.student_number}</strong></div>
+            <div><span>Class</span><strong>{student.class_name || 'Not assigned'}</strong></div>
+          </div>
+        </div>
         <div className="workspace-avatar"><GraduationCap size={25}/></div>
       </section>
-      <section className="student-dashboard-card">
-        <h2>Your learning space</h2>
-        <div className="student-profile-details">
-          <div><span>Student ID</span><strong>{student.student_number}</strong></div>
-          <div><span>Class</span><strong>{student.class_name || 'Not assigned'}</strong></div>
-        </div>
-        <div className="notice info"><ShieldCheck size={16}/>Your school login is active. Your learning activities are shown below.</div>
-        <p className="form-help">Keep your Personal Access Code private. If you need a new one, ask your teacher.</p>
-      </section>
       <SpellingJourney studentSessionToken={sessionToken} />
-      <section className="student-dashboard-card"><p className="form-help">More assigned learning activities will appear here as they become available.</p>
-      </section>
+      <section className="student-dashboard-card"><p className="form-help">More assigned learning activities will appear here as they become available.</p></section>
     </main>
   </div>
 }
