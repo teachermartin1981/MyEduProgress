@@ -16,7 +16,9 @@ type SpellingList = {
 type Progress = { list_id: string; attempts_count: number; best_score: number; is_unlocked: boolean; is_passed: boolean; passed_at: string | null }
 type ListStatus = SpellingList & { available_words: number; progress?: Progress }
 
-export default function SpellingJourney() {
+type Props = { studentSessionToken?: string }
+
+export default function SpellingJourney({ studentSessionToken }: Props) {
   const [lists, setLists] = useState<ListStatus[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -50,7 +52,7 @@ export default function SpellingJourney() {
         return
       }
 
-      const { data: progressData } = await supabase.functions.invoke('spelling-assessment', { body: { action: 'get_progress' } })
+      const { data: progressData } = await supabase.functions.invoke('spelling-assessment', { body: { action: 'get_progress', ...(studentSessionToken ? { session_token: studentSessionToken } : {}) } })
       const progressByList = new Map<string, Progress>((progressData?.progress || []).map((item: Progress) => [item.list_id, item] as [string, Progress]))
       const counts = (words || []).reduce<Record<string, number>>((acc, row) => {
         acc[row.list_id] = (acc[row.list_id] || 0) + 1
@@ -68,9 +70,9 @@ export default function SpellingJourney() {
     }
     void load()
     return () => { active = false }
-  }, [refreshKey])
+  }, [refreshKey, studentSessionToken])
 
-  if (activeList) return <SpellingPractice list={activeList} onBack={() => { setActiveList(null); setRefreshKey(value => value + 1) }} />
+  if (activeList) return <SpellingPractice list={activeList} studentSessionToken={studentSessionToken} onBack={() => { setActiveList(null); setRefreshKey(value => value + 1) }} />
 
   return (
     <section className="spelling-journey-panel">
