@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { BookOpenCheck, LogOut, GraduationCap, ShieldCheck } from 'lucide-react'
+import SpellingJourney from './SpellingJourney'
 
 type Student = {
   id: string; student_number: string; display_name: string;
   workspace_id: string; workspace_name: string; class_id?: string | null; class_name?: string | null;
 }
-type Props = { student: Student; onSignOut: () => void }
+type Props = { student: Student; sessionToken: string; onSignOut: () => void }
 
-export default function SchoolStudentPortal({ student, onSignOut }: Props) {
+export default function SchoolStudentPortal({ student, sessionToken, onSignOut }: Props) {
   const [message] = useState('Your school login is active. Learning activities will appear here as they are connected to your student account.')
   return <div className="student-portal-shell">
     <header className="workspace-topbar">
@@ -25,8 +26,11 @@ export default function SchoolStudentPortal({ student, onSignOut }: Props) {
           <div><span>Student ID</span><strong>{student.student_number}</strong></div>
           <div><span>Class</span><strong>{student.class_name || 'Not assigned'}</strong></div>
         </div>
-        <div className="notice info"><ShieldCheck size={16}/>{message}</div>
+        <div className="notice info"><ShieldCheck size={16}/>Your school login is active. Your learning activities are shown below.</div>
         <p className="form-help">Keep your Personal Access Code private. If you need a new one, ask your teacher.</p>
+      </section>
+      <SpellingJourney studentSessionToken={sessionToken} />
+      <section className="student-dashboard-card"><p className="form-help">More assigned learning activities will appear here as they become available.</p>
       </section>
     </main>
   </div>
