@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { CheckCircle2, LockKeyhole, SpellCheck } from 'lucide-react'
+import { LockKeyhole, SpellCheck, BookOpen, Headphones } from 'lucide-react'
 import { supabase } from './lib/supabase'
 import SpellingPractice from './SpellingPractice'
 
@@ -23,6 +23,7 @@ export default function SpellingJourney({ studentSessionToken }: Props) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [activeList, setActiveList] = useState<ListStatus | null>(null)
+  const [activeMode, setActiveMode] = useState<'practice' | 'test'>('practice')
   const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
@@ -72,7 +73,7 @@ export default function SpellingJourney({ studentSessionToken }: Props) {
     return () => { active = false }
   }, [refreshKey, studentSessionToken])
 
-  if (activeList) return <SpellingPractice list={activeList} studentSessionToken={studentSessionToken} onBack={() => { setActiveList(null); setRefreshKey(value => value + 1) }} />
+  if (activeList) return <SpellingPractice list={activeList} studentSessionToken={studentSessionToken} initialAssessment={activeMode === 'test'} onBack={() => { setActiveList(null); setRefreshKey(value => value + 1) }} />
 
   return (
     <section className="spelling-journey-panel">
@@ -89,27 +90,27 @@ export default function SpellingJourney({ studentSessionToken }: Props) {
         <div className="spelling-list-grid">
           {lists.map(list => {
             const target = Math.max(0, Number(list.target_word_count) || 0)
-            const ready = Math.min(list.available_words, target)
-            const percent = target ? Math.round(ready / target * 100) : 0
+            const mastered = 0
             const unlocked = Boolean(list.progress?.is_unlocked)
             const passed = Boolean(list.progress?.is_passed)
+            const ready = list.available_words >= 25
+            const status = passed ? 'Passed' : unlocked ? 'Active' : 'Locked'
             return (
-              <article className="spelling-list-card" key={list.id}>
-                <div className="spelling-list-card-top">
-                  <span>{list.grade_label}</span>
-                  <small>List {list.list_number}</small>
-                </div>
+              <article className={`spelling-list-card spelling-list-card-compact ${passed ? 'is-passed' : unlocked ? 'is-active' : 'is-locked'}`} key={list.id}>
+                <div className="spelling-list-card-top"><span>{list.grade_label}</span><small>List {list.list_number}</small></div>
                 <strong>{list.title}</strong>
-                <div className="spelling-list-count"><b>{ready}</b> / {target} words ready</div>
-                <div className="skill-track"><span style={{ width: percent + '%' }}/></div>
-                <small className="spelling-list-foot">{passed ? <><CheckCircle2 size={13}/> Mastered · Best score {list.progress?.best_score}/25</> : unlocked ? (ready >= 25 ? 'Unlocked · Ready to practise and test' : 'Unlocked · Content preparation in progress') : 'Locked · Pass the previous list first'}</small>
-                <button className="spelling-open-button" onClick={() => setActiveList(list)} disabled={ready === 0 || !unlocked}>{unlocked ? 'Practise this list' : 'Locked'}</button>
+                <div className="spelling-mastery-label"><span>{mastered}/{target} mastered</span><b>{status}</b></div>
+                <div className="spelling-mastery-track"><span style={{ width: (target ? mastered / target * 100 : 0) + '%' }}/></div>
+                <div className="spelling-card-actions">
+                  <button className="spelling-card-action" onClick={() => { setActiveList(list); setActiveMode('practice') }} disabled={!unlocked || !ready}><BookOpen size={13}/> Practise</button>
+                  <button className="spelling-card-action spelling-card-test" onClick={() => { setActiveList(list); setActiveMode('test') }} disabled={!unlocked || !ready}><Headphones size={13}/> Test</button>
+                </div>
               </article>
             )
           })}
         </div>
       }
-      <p className="spelling-journey-note">Practise at your own pace. Pass each assessment with at least 24 out of 25 correct answers to unlock the next list.</p>
+      <p className="spelling-journey-note">Pass with at least 24 out of 25 correct answers to unlock the next list. Word mastery is tracked separately.</p>
     </section>
   )
 }
