@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { CheckCircle2, LockKeyhole, SpellCheck } from 'lucide-react'
 import { supabase } from './lib/supabase'
+import SpellingPractice from './SpellingPractice'
 
 type SpellingList = {
   id: string
@@ -18,6 +19,7 @@ export default function SpellingJourney() {
   const [lists, setLists] = useState<ListStatus[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [activeList, setActiveList] = useState<ListStatus | null>(null)
 
   useEffect(() => {
     let active = true
@@ -59,9 +61,11 @@ export default function SpellingJourney() {
         setLoading(false)
       }
     }
-    load()
+    void load()
     return () => { active = false }
   }, [])
+
+  if (activeList) return <SpellingPractice list={activeList} onBack={() => setActiveList(null)} />
 
   return (
     <section className="spelling-journey-panel">
@@ -90,12 +94,13 @@ export default function SpellingJourney() {
                 <div className="spelling-list-count"><b>{ready}</b> / {target} words ready</div>
                 <div className="skill-track"><span style={{ width: percent + '%' }}/></div>
                 <small className="spelling-list-foot">{ready >= target && target > 0 ? <><CheckCircle2 size={13}/> Ready to practise</> : 'Content preparation in progress'}</small>
+                <button className="spelling-open-button" onClick={() => setActiveList(list)} disabled={ready === 0}>Practise this list</button>
               </article>
             )
           })}
         </div>
       }
-      <p className="spelling-journey-note">Each list uses its own word target. Test length and pass requirements remain consistent across grades.</p>
+      <p className="spelling-journey-note">Practise at your own pace. Assessment and automatic mastery tracking are the next development step.</p>
     </section>
   )
 }
