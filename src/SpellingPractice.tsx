@@ -72,11 +72,11 @@ export default function SpellingPractice({ list, onBack, studentSessionToken }: 
     return () => { active = false; window.speechSynthesis?.cancel() }
   }, [list.id])
 
-  if (assessmentMode) return <SpellingAssessment list={list} studentSessionToken={studentSessionToken} onBack={() => setAssessmentMode(false)} />
-
   const current = words[index]
   const accepted = useMemo(() => current ? [current.word, ...(current.accepted_spellings || [])].map(x => x.trim().toLocaleLowerCase()) : [], [current])
   const isCorrect = accepted.includes(answer.trim().toLocaleLowerCase())
+
+  if (assessmentMode) return <SpellingAssessment list={list} studentSessionToken={studentSessionToken} onBack={() => setAssessmentMode(false)} />
 
   function replay() {
     if (!current) return
