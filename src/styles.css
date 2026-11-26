@@ -489,3 +489,37 @@ footer{max-width:1160px;margin:auto;padding:22px 28px 28px;display:flex;justify-
 .student-profile-details span{font-size:12px;color:#7d8aa3;font-weight:600}
 .student-profile-details strong{font-size:14px;color:#263653;font-weight:800}
 @media(max-width:650px){.student-profile-details{gap:16px;flex-wrap:wrap}.student-profile-details>div{gap:5px}}
+
+/* School student home dashboard */
+.student-home-main{max-width:1240px}
+.student-home-section{margin-top:28px}
+.student-home-section-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;color:#697895}
+.student-home-section-heading h2{font:800 20px Manrope,sans-serif;color:#202d49;margin:0 0 4px}
+.student-home-section-heading p{font-size:13px;color:#8995aa;margin:0}
+.student-learning-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px}
+.student-learning-card{display:flex;align-items:flex-start;gap:12px;text-align:left;min-height:142px;padding:18px 15px;background:#fff;border:1px solid #e5eaf3;border-radius:15px;cursor:pointer;transition:transform .16s,border-color .16s,box-shadow .16s}
+.student-learning-card:hover{transform:translateY(-2px);border-color:#cbd5f5;box-shadow:0 9px 24px rgba(35,52,86,.07)}
+.student-learning-icon{width:42px;height:42px;flex:0 0 42px;border-radius:13px;display:grid;place-items:center;background:#eef1ff;color:#5668dc}
+.student-learning-icon.reading{background:#eaf5ff;color:#2877b9}.student-learning-icon.writing{background:#fff2e9;color:#d87936}.student-learning-icon.listening{background:#eaf8f1;color:#29966b}.student-learning-icon.grammar{background:#f4edff;color:#8756c8}
+.student-learning-copy{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1}
+.student-learning-copy strong{font-size:15px;color:#263653}.student-learning-copy small{font-size:11px;line-height:1.45;color:#8290a7;min-height:31px}.student-learning-copy em{font-style:normal;font-size:10px;font-weight:700;color:#6574d8;margin-top:4px}
+.student-learning-arrow{color:#a0aabe;margin-top:3px;flex:0 0 auto}
+.student-coming-notice{margin-top:12px;padding:11px 14px;border-radius:10px;background:#f0f3ff;color:#4c5d9c;font-size:13px;display:flex;justify-content:space-between;gap:10px}.student-coming-notice button{border:0;background:none;color:#4d60cf;font-weight:700;cursor:pointer}
+.student-overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:25px}
+.student-overview-card{background:#fff;border:1px solid #e5eaf3;border-radius:16px;padding:20px}
+.student-overview-card .student-home-section-heading{margin-bottom:18px}
+.student-empty-state{min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;text-align:center;color:#9aa5b8}
+.student-empty-state strong{font-size:13px;color:#50607a}.student-empty-state span{font-size:11px;color:#929db0}
+.student-overall-card{display:grid;grid-template-columns:1fr minmax(250px,.65fr);gap:25px;align-items:center;margin-top:17px;padding:23px 25px;background:#fff;border:1px solid #e5eaf3;border-radius:16px}
+.student-card-kicker{font-size:10px;letter-spacing:1.4px;font-weight:800;color:#7b89a5}
+.student-overall-card h2{font:800 19px Manrope,sans-serif;color:#24334f;margin:7px 0}
+.student-overall-card p{font-size:12px;line-height:1.6;color:#8995aa;margin:0;max-width:560px}
+.student-progress-placeholder{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:16px 18px;background:#f7f8ff;border-radius:13px;color:#6473d8}
+.student-progress-placeholder strong{font-size:13px;color:#354464}.student-progress-placeholder span{font-size:11px;color:#8591a8}
+.student-progress-placeholder button{display:flex;align-items:center;gap:4px;border:0;background:none;padding:5px 0 0;color:#5365d4;font-weight:800;font-size:12px;cursor:pointer}
+.student-dashboard-footnote{text-align:center;color:#9aa5b8;font-size:11px;margin:20px 0}
+.student-journey-page{max-width:1100px;margin:0 auto}.student-journey-back{display:inline-flex;align-items:center;gap:7px;border:0;background:none;color:#596b8b;font-weight:700;font-size:13px;padding:0;margin:0 0 22px;cursor:pointer}
+.student-journey-page-heading{display:flex;align-items:center;gap:14px;margin-bottom:20px}.student-journey-page-heading h1{font:800 25px Manrope,sans-serif;color:#23324e;margin:4px 0}.student-journey-page-heading p{font-size:13px;color:#8995aa;margin:0}
+.student-journey-page .spelling-journey-panel{margin-top:0}
+@media(max-width:1000px){.student-learning-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:680px){.student-learning-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.student-learning-card{min-height:130px;padding:13px 10px;gap:8px}.student-learning-icon{width:36px;height:36px;flex-basis:36px}.student-overview-grid{grid-template-columns:1fr}.student-overall-card{grid-template-columns:1fr;padding:18px}.student-home-section-heading h2{font-size:18px}}
