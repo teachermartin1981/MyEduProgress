@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ArrowLeft, ArrowRight, CheckCircle2, Eye, EyeOff, Headphones, RotateCcw, Volume2 } from 'lucide-react'
 import { supabase } from './lib/supabase'
+import SpellingAssessment from './SpellingAssessment'
 
 type WordRow = {
   id: string
@@ -48,6 +49,7 @@ export default function SpellingPractice({ list, onBack }: Props) {
   const [showMeaning, setShowMeaning] = useState(true)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [assessmentMode, setAssessmentMode] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -68,6 +70,8 @@ export default function SpellingPractice({ list, onBack }: Props) {
     void load()
     return () => { active = false; window.speechSynthesis?.cancel() }
   }, [list.id])
+
+  if (assessmentMode) return <SpellingAssessment list={list} onBack={() => setAssessmentMode(false)} />
 
   const current = words[index]
   const accepted = useMemo(() => current ? [current.word, ...(current.accepted_spellings || [])].map(x => x.trim().toLocaleLowerCase()) : [], [current])
@@ -117,6 +121,7 @@ export default function SpellingPractice({ list, onBack }: Props) {
         <input id="spelling-practice-answer" value={answer} onChange={event => { setAnswer(event.target.value); setChecked(false) }} autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false} placeholder="Write your spelling here" />
         {!checked ? <button className="primary-button" type="submit" disabled={!answer.trim()}>Check spelling <CheckCircle2 size={17}/></button> : <div className={isCorrect ? 'spelling-feedback correct' : 'spelling-feedback retry'}>{isCorrect ? 'Correct! Well done.' : 'Not quite. Listen again and have another try.'}{!isCorrect && <button type="button" onClick={() => { setAnswer(''); setChecked(false) }}>Try again</button>}</div>}
       </form>
+      {words.length >= 25 && <div className="spelling-assessment-launch"><div><strong>Ready to test your spelling?</strong><p>25 random words · 24 correct answers needed to pass</p></div><button className="primary-button" onClick={() => setAssessmentMode(true)}>Take mastery test <ArrowRight size={16}/></button></div>}
       <div className="spelling-practice-nav">
         <button className="secondary-button" onClick={previous} disabled={index === 0}>Previous</button>
         <span>{index + 1} / {words.length}</span>
