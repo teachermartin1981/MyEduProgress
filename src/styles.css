@@ -563,3 +563,21 @@ footer{max-width:1160px;margin:auto;padding:22px 28px 28px;display:flex;justify-
 .student-skill-progress-card>em{grid-column:1;grid-row:3;margin-top:2px}
 .student-skill-progress-card>small{grid-column:1 / -1;grid-row:4;padding-top:10px;margin-top:4px}
 @media(max-width:680px){.student-skill-progress-card{min-height:132px;padding:12px 11px;column-gap:7px}.student-skill-progress-card>b{font-size:25px}.student-skill-progress-card>small{font-size:9px}}
+
+
+/* Compact spelling practice and selectable English pronunciation */
+.spelling-prompt-compact{padding:12px 14px;display:grid;grid-template-columns:auto 1fr;column-gap:10px;row-gap:3px;align-items:center;text-align:left;border-radius:11px}
+.spelling-prompt-compact .spelling-prompt-icon{grid-column:1;grid-row:1 / span 2;width:34px;height:34px;border-radius:9px}
+.spelling-prompt-compact h3{grid-column:2;margin:0;font-size:13px}
+.spelling-prompt-compact p{grid-column:2;margin:0;max-width:none;font-size:10px}
+.spelling-audio-actions{grid-column:2;display:flex;align-items:center;gap:12px;margin-top:5px}
+.spelling-prompt-compact .spelling-audio-button{display:inline-flex;align-items:center;gap:6px;min-height:29px;padding:5px 10px;border:1px solid #dce3fa;border-radius:7px;background:#eef1ff;color:#4e61c7;font:700 10px 'DM Sans',sans-serif;cursor:pointer}
+.spelling-prompt-compact .spelling-replay-link{font-size:10px}
+.spelling-context-collapsed{margin-top:9px;padding:0;background:#f8f9fc;border:1px solid #e9edf4}
+.spelling-context-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:0;background:transparent;color:#687792;cursor:pointer}
+.spelling-context-toggle span{font-size:9px;font-weight:800;letter-spacing:.8px}
+.spelling-context-collapsed p{margin:0;padding:0 12px 11px;color:#35415c;font-size:12px;line-height:1.5}
+.spelling-voice-setting{display:flex;align-items:center;justify-content:flex-end;gap:9px;margin-top:18px;padding-top:12px;border-top:1px solid #edf0f5}
+.spelling-voice-setting label{font-size:10px;font-weight:700;color:#8792a6}
+.spelling-voice-setting select{max-width:min(100%,280px);padding:7px 9px;border:1px solid #e1e6ef;border-radius:7px;background:#fff;color:#53617a;font:10px 'DM Sans',sans-serif}
+@media(max-width:600px){.spelling-prompt-compact{grid-template-columns:1fr;text-align:center}.spelling-prompt-compact .spelling-prompt-icon,.spelling-prompt-compact h3,.spelling-prompt-compact p,.spelling-audio-actions{grid-column:1;justify-self:center}.spelling-prompt-compact .spelling-prompt-icon{grid-row:auto}.spelling-audio-actions{flex-wrap:wrap;justify-content:center}.spelling-voice-setting{justify-content:space-between}}
