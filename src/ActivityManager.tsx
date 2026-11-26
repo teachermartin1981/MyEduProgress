@@ -26,7 +26,6 @@ export default function ActivityManager({workspaceId,role}:Props){
  const [type,setType]=useState('practice'),[level,setLevel]=useState('A2')
  const [description,setDescription]=useState(''),[objective,setObjective]=useState('')
  const [skills,setSkills]=useState<Category[]>(['reading','writing']),[editing,setEditing]=useState<string|null>(null)
- const canManageAll=role==='owner'||role==='admin'
  const call=useCallback(async(action:string,extra:Record<string,unknown>={})=>{
   const {data,error}=await supabase.functions.invoke('workspace-academics',{body:{action,workspace_id:workspaceId,...extra}})
   if(error||data?.error)throw new Error(data?.error||error.message)
