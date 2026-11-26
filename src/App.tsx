@@ -285,7 +285,7 @@ export default function App() {
                         {studentMode === 'independent-signup' && <label className="consent-check"><input type="checkbox" checked={adultConfirmed} onChange={e=>setAdultConfirmed(e.target.checked)}/> I am 18 or older, or I am the parent/legal guardian completing this registration and confirming permission for the learner.</label>}
                         <button className="primary-button" disabled={busy}>{busy ? 'Please wait…' : studentMode==='independent-signup'?'Create student account':'Sign in'} <ArrowRight size={17}/></button>
                         <button type="button" className="preview-link" onClick={()=>{setStudentMode(studentMode==='independent-signup'?'independent-login':'independent-signup');setNotice(null)}}>{studentMode==='independent-signup'?'Already have an account? Sign in':'New independent learner? Create an account'}</button>
-                        <p className="form-help">Monthly $3.99 · Annual $25 · Lifetime $50 launch offer for the first 100 students.</p>
+                        <p className="form-help">Independent Student plans: $3.99/month or $39.90/year. Payment will be added later; no charge is taken during registration.</p>
                       </>}
                     </form>
                     <button type="button" className="preview-link" onClick={() => setShowStudentPreview(true)}>Preview the student dashboard</button>
