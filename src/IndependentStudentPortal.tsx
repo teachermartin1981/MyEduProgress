@@ -2,10 +2,10 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { ArrowRight, BookOpenCheck, GraduationCap, LogOut, Mail, ShieldCheck, UserPlus, XCircle } from 'lucide-react'
 import { supabase } from './lib/supabase'
 
-type Props = { userId: string; displayName: string; onSignOut: () => void }
+type Props = { displayName: string; onSignOut: () => void }
 type Tutor = { id: string; tutor_user_id: string; permission: string; active: boolean; created_at: string; invite?: { tutor_email?: string } | null }
 
-export default function IndependentStudentPortal({ userId, displayName, onSignOut }: Props) {
+export default function IndependentStudentPortal({ displayName, onSignOut }: Props) {
   const [email, setEmail] = useState('')
   const [inviteUrl, setInviteUrl] = useState('')
   const [tutors, setTutors] = useState<Tutor[]>([])
