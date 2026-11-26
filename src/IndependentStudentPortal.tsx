@@ -75,7 +75,7 @@ export default function IndependentStudentPortal({ displayName, onSignOut }: Pro
           {tutors.filter(t => t.active).length === 0 ? <p>No teachers or tutors have access yet.</p> : tutors.filter(t => t.active).map(t => <div className="independent-tutor" key={t.id}><span>{t.invite?.tutor_email || 'Connected tutor'}<small>Read-only progress access</small></span><button disabled={busy} onClick={() => void revoke(t.id)}><XCircle size={15}/> Revoke</button></div>)}
         </div>
       </section>
-      <p className="independent-footnote">For learners under 18, a parent or legal guardian must complete registration and confirm permission. School-provided Student ID and PAC accounts remain separate.</p>
+      <p className="independent-footnote">For learners under 18, a parent or legal guardian must complete registration and confirm permission. School-provided Student ID and PAC accounts remain separate. Payment checkout is not active yet; creating this account does not charge you.</p>
     </main>
   </div>
 }
