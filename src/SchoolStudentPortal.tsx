@@ -7,7 +7,7 @@ type Student = {
 }
 type Props = { student: Student; onSignOut: () => void }
 
-export default function SchoolStudentPortal({ student, sessionToken, onSignOut }: Props) {
+export default function SchoolStudentPortal({ student, onSignOut }: Props) {
   const [message] = useState('Your school login is active. Learning activities will appear here as they are connected to your student account.')
   return <div className="student-portal-shell">
     <header className="workspace-topbar">
