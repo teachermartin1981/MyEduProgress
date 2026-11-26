@@ -305,3 +305,29 @@ footer{max-width:1160px;margin:auto;padding:22px 28px 28px;display:flex;justify-
 .transfer-student-button{border:1px solid #dfe4ee;border-radius:7px;background:#f1f4ff;color:#5366c9;padding:7px 9px;font-size:11px;font-weight:700}
 .transfer-student-button:disabled{opacity:.4;cursor:not-allowed}
 @media(max-width:650px){.rename-class-form{align-items:stretch;flex-wrap:wrap}.class-heading-actions{flex-wrap:wrap}}
+
+
+/* Independent student registration and private tutor sharing */
+.independent-card{margin-top:20px;padding:24px;background:#fff;border:1px solid #e8ecf4;border-radius:16px;box-shadow:0 8px 28px rgba(35,52,86,.035)}
+.independent-card-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;color:#586bd4}
+.independent-card-heading h2{font:800 20px Manrope,sans-serif;color:#263451;margin:7px 0}
+.independent-card-heading p{font-size:12px;line-height:1.65;color:#78849a;max-width:690px;margin:0}
+.independent-features{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.independent-features span{padding:8px 11px;border:1px solid #e6eaf3;border-radius:20px;background:#f8f9fd;color:#596783;font-size:10px;font-weight:700}
+.independent-invite-form{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end;margin-top:18px}
+.independent-invite-form label{display:flex;flex-direction:column;gap:7px;color:#56627a;font-size:11px;font-weight:700}
+.independent-invite-form .primary-button{height:42px;white-space:nowrap}
+.independent-share{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:13px;padding:12px;background:#f2f5ff;border:1px solid #e0e6ff;border-radius:9px}
+.independent-share span{flex:1;min-width:200px;overflow-wrap:anywhere;color:#4c5fae;font-size:11px}
+.independent-tutors{margin-top:22px;padding-top:17px;border-top:1px solid #edf0f5}
+.independent-tutors h3{margin:0 0 10px;color:#34415e;font-size:13px}
+.independent-tutors>p{color:#929bad;font-size:11px}
+.independent-tutor{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-top:1px solid #f0f2f6}
+.independent-tutor>span{display:flex;flex-direction:column;gap:4px;color:#394660;font-size:12px;font-weight:700}
+.independent-tutor small{color:#929bad;font-size:10px;font-weight:400}
+.independent-tutor button{display:flex;align-items:center;gap:5px;padding:7px 9px;border:1px solid #f0dfdc;border-radius:7px;background:#fff;color:#a45e54;font-size:10px}
+.independent-footnote{margin:17px 3px;color:#929bad;font-size:10px;line-height:1.6}
+.consent-check{display:flex!important;flex-direction:row!important;align-items:flex-start;gap:9px!important;padding:11px 12px;border:1px solid #e4e8f1;border-radius:9px;background:#fafbfe;font-weight:500!important;line-height:1.5}
+.consent-check input{width:auto;margin-top:2px}
+.student-mode-switch{margin-bottom:14px}
+@media(max-width:600px){.independent-card{padding:18px}.independent-invite-form{grid-template-columns:1fr}.independent-invite-form .primary-button{width:100%}.independent-card-heading h2{font-size:17px}}
