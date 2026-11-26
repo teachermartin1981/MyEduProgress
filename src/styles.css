@@ -294,3 +294,14 @@ footer{max-width:1160px;margin:auto;padding:22px 28px 28px;display:flex;justify-
 .access-code-table-wrap{overflow-x:auto}.pac-value{font-family:ui-monospace,monospace;letter-spacing:1.5px;color:#25345b;background:#eef2ff;padding:5px 8px;border-radius:6px;white-space:nowrap}
 .pac-action{width:29px;height:29px;padding:0;margin-right:4px}
 @media(max-width:650px){.access-code-heading{align-items:flex-start;flex-direction:column}}
+
+.class-heading-actions{display:flex;align-items:center;gap:7px}
+.rename-class-form{display:flex;align-items:flex-end;gap:9px;padding:13px;margin:12px 0;border:1px solid #e1e6f0;border-radius:11px;background:#fafbff}
+.rename-class-form label{display:flex;flex:1;flex-direction:column;gap:5px;color:#53617a;font-size:11px;font-weight:700}
+.rename-class-form input,.student-transfer-control select{border:1px solid #dfe4ee;border-radius:8px;background:#fff;padding:9px 10px;color:#26334e;font:12px 'DM Sans',sans-serif;min-width:0}
+.student-previous-classes{display:block;margin-top:4px;color:#8a94a8;font-size:10px}
+.student-transfer-control{display:flex;align-items:center;gap:5px;min-width:150px}
+.student-transfer-control select{width:115px;padding:7px 8px;font-size:11px}
+.transfer-student-button{border:1px solid #dfe4ee;border-radius:7px;background:#f1f4ff;color:#5366c9;padding:7px 9px;font-size:11px;font-weight:700}
+.transfer-student-button:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:650px){.rename-class-form{align-items:stretch;flex-wrap:wrap}.class-heading-actions{flex-wrap:wrap}}
