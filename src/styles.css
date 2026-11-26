@@ -397,3 +397,27 @@ footer{max-width:1160px;margin:auto;padding:22px 28px 28px;display:flex;justify-
 .spelling-practice-nav>span{color:#8792a7;font-size:10px}
 .spelling-practice-nav button{display:inline-flex;align-items:center;gap:6px;min-height:36px}
 @media(max-width:600px){.spelling-practice{padding-top:13px}.spelling-practice-top{align-items:flex-start;flex-direction:column}.spelling-prompt{padding:18px 12px}.spelling-context p{font-size:13px}}
+
+
+/* Spelling mastery assessment */
+.spelling-assessment-rules{margin:0 0 15px;padding:13px 15px;border:1px solid #e3e8f5;border-radius:10px;background:#f8f9ff;color:#6f7b91;font-size:11px;line-height:1.65}
+.spelling-assessment-rules strong{color:#34415e}
+.spelling-prompt>small{margin-top:8px;color:#8a94a8;font-size:9px}
+.spelling-audio-button:disabled{opacity:.5;cursor:not-allowed}
+.spelling-assessment-launch{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;padding:14px;border:1px solid #dfe5f3;border-radius:11px;background:#f8f9ff}
+.spelling-assessment-launch strong{color:#34415e;font-size:12px}
+.spelling-assessment-launch p{margin:5px 0 0;color:#8993a6;font-size:10px}
+.spelling-assessment-launch .primary-button{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.spelling-assessment-result{text-align:center;padding:20px 0}
+.spelling-assessment-result h3{margin:12px 0 6px;color:#263451;font:800 20px Manrope,sans-serif}
+.spelling-score{margin:8px 0;color:#536bd4;font:800 38px Manrope,sans-serif}
+.spelling-assessment-result>p{color:#7d899d;font-size:11px;line-height:1.6}
+.spelling-assessment-result>.spelling-feedback{display:inline-block;margin:7px 0}
+.spelling-unlocked{padding:10px;border-radius:9px;background:#edf7f0;color:#287c4c!important}
+.spelling-review-list{display:grid;gap:6px;margin:18px 0;text-align:left}
+.spelling-review-list>div{display:grid;grid-template-columns:28px 1fr 1fr;gap:8px;align-items:center;padding:9px 10px;border:1px solid #e9edf3;border-radius:8px;font-size:10px}
+.spelling-review-list>div.correct{background:#f4faf6;color:#287c4c}
+.spelling-review-list>div.retry{background:#fff9f1;color:#946b2d}
+.spelling-review-list strong{text-align:right}
+.spelling-assessment-result>.primary-button{display:inline-flex;align-items:center;justify-content:center;margin-top:12px}
+@media(max-width:600px){.spelling-assessment-launch{align-items:stretch;flex-direction:column}.spelling-assessment-launch .primary-button{justify-content:center}.spelling-review-list>div{grid-template-columns:22px 1fr 1fr;font-size:9px}}
