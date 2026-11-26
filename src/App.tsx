@@ -2,12 +2,14 @@ import { useState, type FormEvent } from 'react'
 import StudentDashboard from './StudentDashboard'
 import ClassManagement from './ClassManagement'
 import ActivityManager from './ActivityManager'
+import IndependentStudentPortal from './IndependentStudentPortal'
 import { ArrowRight, BookOpenCheck, Building2, GraduationCap, LockKeyhole, Mail, ShieldCheck, Sparkles, UserPlus, LogOut, CheckCircle2 } from 'lucide-react'
 import { supabase } from './lib/supabase'
 
 type Portal = 'student' | 'staff'
 type WorkspaceType = 'teacher' | 'school'
 type PlanId = 'teacher_monthly' | 'teacher_annual' | 'school_monthly'
+type IndependentUser = { id: string; displayName: string }
 type Notice = { kind: 'error' | 'success' | 'info'; text: string } | null
 type Workspace = { id: string; name: string; type: WorkspaceType; role: 'owner' | 'admin' | 'teacher' }
 
@@ -28,10 +30,38 @@ export default function App() {
   const [notice, setNotice] = useState<Notice>(null)
   const [workspace, setWorkspace] = useState<Workspace | null>(null)
   const [showStudentPreview, setShowStudentPreview] = useState(false)
+  const [studentMode, setStudentMode] = useState<'school' | 'independent-login' | 'independent-signup'>('school')
+  const [independentName, setIndependentName] = useState('')
+  const [adultConfirmed, setAdultConfirmed] = useState(false)
+  const [independentUser, setIndependentUser] = useState<IndependentUser | null>(null)
+
+  async function finishIndependentProfile(userId: string, fallbackName?: string) {
+    const { data: profile, error } = await supabase.from('independent_student_profiles').select('display_name').eq('user_id', userId).maybeSingle()
+    if (error) throw new Error('Could not load your student profile.')
+    if (profile) { setIndependentUser({ id: userId, displayName: profile.display_name }); return }
+    const metadata = (await supabase.auth.getUser()).data.user?.user_metadata || {}
+    const displayName = fallbackName || String(metadata.full_name || '')
+    const { data, error: createError } = await supabase.functions.invoke('independent-students', { body: { action: 'create_profile', display_name: displayName, adult_or_guardian_confirmed: metadata.adult_or_guardian_confirmed === true } })
+    if (createError || data?.error) throw new Error(data?.error || createError.message)
+    setIndependentUser({ id: userId, displayName })
+  }
 
   async function handleStudentLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    setNotice({ kind: 'info', text: 'Student sign-in will be enabled after the secure Student ID and Personal Access Code service is completed.' })
+    if (studentMode === 'school') { setNotice({ kind: 'info', text: 'School Student ID and PAC sign-in is being connected to the secure student login service.' }); return }
+    setBusy(true); setNotice(null)
+    if (studentMode === 'independent-signup') {
+      if (!adultConfirmed) { setBusy(false); setNotice({ kind: 'error', text: 'A parent or legal guardian must complete registration for learners under 18. Please confirm adult/guardian responsibility.' }); return }
+      const { data, error } = await supabase.auth.signUp({ email: email.trim().toLowerCase(), password, options: { data: { full_name: independentName.trim(), adult_or_guardian_confirmed: true, account_type: 'independent_student' }, emailRedirectTo: window.location.origin + import.meta.env.BASE_URL } })
+      if (error) { setBusy(false); setNotice({ kind: 'error', text: error.message }); return }
+      if (data.session && data.user) { try { await finishIndependentProfile(data.user.id, independentName.trim()); setNotice({ kind: 'success', text: 'Your independent student account is ready.' }) } catch (e) { setNotice({ kind: 'error', text: e instanceof Error ? e.message : 'Profile setup failed.' }) } }
+      else { setNotice({ kind: 'success', text: 'Account created. Confirm your email, then sign in here to finish setting up your student profile.' }); setStudentMode('independent-login') }
+      setBusy(false); return
+    }
+    const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password })
+    if (error || !data.user) { setBusy(false); setNotice({ kind: 'error', text: error?.message || 'Sign-in failed.' }); return }
+    try { await finishIndependentProfile(data.user.id); setNotice({ kind: 'success', text: 'Welcome back!' }) } catch (e) { setNotice({ kind: 'error', text: e instanceof Error ? e.message : 'Student profile could not be loaded.' }) }
+    setBusy(false)
   }
 
   async function createWorkspace(accessToken: string, details: { fullName: string; name: string; type: WorkspaceType; planId: PlanId }) {
@@ -145,8 +175,10 @@ export default function App() {
   }
 
   async function signOut() {
-    await supabase.auth.signOut(); setWorkspace(null); setNotice({ kind: 'info', text: 'You have signed out.' })
+    await supabase.auth.signOut(); setWorkspace(null); setIndependentUser(null); setNotice({ kind: 'info', text: 'You have signed out.' })
   }
+
+  if (independentUser) return <IndependentStudentPortal userId={independentUser.id} displayName={independentUser.displayName} onSignOut={signOut} />
 
   if (showStudentPreview) return <StudentDashboard onBack={() => setShowStudentPreview(false)} />
 
@@ -223,14 +255,29 @@ export default function App() {
                   <button className={portal === 'staff' ? 'active' : ''} onClick={() => {setPortal('staff');setNotice(null)}}>Teacher / School</button>
                 </div>
                 {portal === 'student' ? (
-                  <form onSubmit={handleStudentLogin} className="login-form">
-                    <label>Student ID<input value={studentId} onChange={e=>setStudentId(e.target.value)} placeholder="Enter your Student ID" required/></label>
-                    <label>Personal Access Code<div className="input-wrap"><LockKeyhole size={17}/><input value={pac} onChange={e=>setPac(e.target.value)} type="password" placeholder="Enter your access code" required/></div></label>
-                    <button className="primary-button">Student login <ArrowRight size={17}/></button>
-                    <p className="form-help">Ask your teacher if you need help with your login details.</p>
+                  <>
+                    <div className="mode-switch student-mode-switch">
+                      <button type="button" className={studentMode==='school'?'selected':''} onClick={()=>{setStudentMode('school');setNotice(null)}}>School student</button>
+                      <button type="button" className={studentMode!=='school'?'selected':''} onClick={()=>{setStudentMode('independent-login');setNotice(null)}}>Independent learner</button>
+                    </div>
+                    <form onSubmit={handleStudentLogin} className="login-form">
+                      {studentMode === 'school' ? <>
+                        <label>Student ID<input value={studentId} onChange={e=>setStudentId(e.target.value)} placeholder="Enter your Student ID" required/></label>
+                        <label>Personal Access Code<div className="input-wrap"><LockKeyhole size={17}/><input value={pac} onChange={e=>setPac(e.target.value)} type="password" placeholder="Enter your access code" required/></div></label>
+                        <button className="primary-button">Student login <ArrowRight size={17}/></button>
+                        <p className="form-help">Ask your teacher if you need help with your login details.</p>
+                      </> : <>
+                        {studentMode === 'independent-signup' && <label>Your name<input value={independentName} onChange={e=>setIndependentName(e.target.value)} placeholder="Student name" required/></label>}
+                        <label>Email address<div className="input-wrap"><Mail size={17}/><input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com" required/></div></label>
+                        <label>Password<div className="input-wrap"><LockKeyhole size={17}/><input type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="At least 8 characters" minLength={8} required/></div></label>
+                        {studentMode === 'independent-signup' && <label className="consent-check"><input type="checkbox" checked={adultConfirmed} onChange={e=>setAdultConfirmed(e.target.checked)}/> I am 18 or older, or I am the parent/legal guardian completing this registration and confirming permission for the learner.</label>}
+                        <button className="primary-button" disabled={busy}>{busy ? 'Please wait…' : studentMode==='independent-signup'?'Create student account':'Sign in'} <ArrowRight size={17}/></button>
+                        <button type="button" className="preview-link" onClick={()=>{setStudentMode(studentMode==='independent-signup'?'independent-login':'independent-signup');setNotice(null)}}>{studentMode==='independent-signup'?'Already have an account? Sign in':'New independent learner? Create an account'}</button>
+                        <p className="form-help">Monthly $3.99 · Annual $25 · Lifetime $50 launch offer for the first 100 students.</p>
+                      </>}
+                    </form>
                     <button type="button" className="preview-link" onClick={() => setShowStudentPreview(true)}>Preview the student dashboard</button>
-                  </form>
-                ) : (
+                  </>                ) : (
                   <>
                     <div className="mode-switch">
                       <button className={staffMode==='login'?'selected':''} onClick={()=>{setStaffMode('login');setNotice(null)}}>Sign in</button>
