@@ -5,7 +5,7 @@ type Student = {
   id: string; student_number: string; display_name: string;
   workspace_id: string; workspace_name: string; class_id?: string | null; class_name?: string | null;
 }
-type Props = { student: Student; sessionToken: string; onSignOut: () => void }
+type Props = { student: Student; onSignOut: () => void }
 
 export default function SchoolStudentPortal({ student, sessionToken, onSignOut }: Props) {
   const [message] = useState('Your school login is active. Learning activities will appear here as they are connected to your student account.')
