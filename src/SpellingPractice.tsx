@@ -60,6 +60,28 @@ export default function SpellingPractice({ list, onBack, studentSessionToken }: 
   const [voiceURI, setVoiceURI] = useState(() => { try { return localStorage.getItem('eduassess-spelling-voice') || '' } catch { return '' } })
 
   useEffect(() => {
+    if (!('speechSynthesis' in window)) return
+    const refreshVoices = () => {
+      const english = window.speechSynthesis.getVoices().filter(voice => /^en(-|_)/i.test(voice.lang))
+      setVoices(english)
+      setVoiceURI(current => {
+        if (current && english.some(voice => voice.voiceURI === current)) return current
+        let saved = ''
+        try { saved = localStorage.getItem('eduassess-spelling-voice') || '' } catch {}
+        const preferred = english.find(voice => voice.voiceURI === saved) || english.find(voice => /^en-GB/i.test(voice.lang)) || english[0]
+        return preferred?.voiceURI || ''
+      })
+    }
+    refreshVoices()
+    window.speechSynthesis.addEventListener('voiceschanged', refreshVoices)
+    return () => window.speechSynthesis.removeEventListener('voiceschanged', refreshVoices)
+  }, [])
+
+  useEffect(() => {
+    try { if (voiceURI) localStorage.setItem('eduassess-spelling-voice', voiceURI) } catch {}
+  }, [voiceURI])
+
+  useEffect(() => {
     let active = true
     async function load() {
       setLoading(true)
@@ -112,14 +134,21 @@ export default function SpellingPractice({ list, onBack, studentSessionToken }: 
     <h2>{list.title}</h2>
     {loading ? <p className="spelling-state">Loading practice words…</p> : error ? <p className="spelling-state error">{error}</p> : current && <>
       <div className="spelling-practice-progress"><span>Word {index + 1} of {words.length}</span><div className="skill-track"><span style={{ width: ((index + 1) / words.length * 100) + '%' }}/></div></div>
-      <div className="spelling-prompt">
-        <div className="spelling-prompt-icon"><Headphones size={24}/></div>
+      <div className="spelling-prompt spelling-prompt-compact">
+        <div className="spelling-prompt-icon"><Headphones size={19}/></div>
         <h3>Listen, read and spell</h3>
         <p>Listen carefully. Use the sentence to help you work out which word you need to write.</p>
-        <button className="primary-button spelling-audio-button" onClick={replay}><Volume2 size={18}/> Play word and sentence</button>
-        <button className="spelling-replay-link" onClick={() => speak(current.word)}><RotateCcw size={14}/> Replay word only</button>
+        <div className="spelling-audio-actions">
+          <button className="spelling-audio-button" onClick={replay}><Volume2 size={15}/> Play word and sentence</button>
+          <button className="spelling-replay-link" onClick={() => speak(current.word, voiceURI)}><RotateCcw size={13}/> Word only</button>
+        </div>
       </div>
-      <div className="spelling-context"><span>CONTEXT SENTENCE</span><p>{current.context_sentence}</p></div>
+      <div className="spelling-context spelling-context-collapsed">
+        <button className="spelling-context-toggle" onClick={() => setShowContext(value => !value)}>
+          <span>CONTEXT SENTENCE</span>{showContext ? <ChevronUp size={15}/> : <ChevronDown size={15}/>}
+        </button>
+        {showContext && <p>{current.context_sentence}</p>}
+      </div>
       <div className="spelling-meaning">
         <button onClick={() => setShowMeaning(value => !value)}>{showMeaning ? <EyeOff size={15}/> : <Eye size={15}/>} {showMeaning ? 'Hide meaning' : 'Show meaning'}</button>
         {showMeaning && <p>{current.english_description}</p>}
