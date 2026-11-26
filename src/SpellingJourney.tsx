@@ -13,7 +13,8 @@ type SpellingList = {
   target_word_count: number
 }
 
-type ListStatus = SpellingList & { available_words: number }
+type Progress = { list_id: string; attempts_count: number; best_score: number; is_unlocked: boolean; is_passed: boolean; passed_at: string | null }
+type ListStatus = SpellingList & { available_words: number; progress?: Progress }
 
 export default function SpellingJourney() {
   const [lists, setLists] = useState<ListStatus[]>([])
@@ -48,15 +49,18 @@ export default function SpellingJourney() {
         return
       }
 
+      const { data: progressData } = await supabase.functions.invoke('spelling-assessment', { body: { action: 'get_progress' } })
+      const progressByList = new Map<string, Progress>((progressData?.progress || []).map((item: Progress) => [item.list_id, item]))
       const counts = (words || []).reduce<Record<string, number>>((acc, row) => {
         acc[row.list_id] = (acc[row.list_id] || 0) + 1
         return acc
       }, {})
 
       if (active) {
-        setLists((curriculum || []).map((list: SpellingList) => ({
+        setLists((curriculum || []).map((list: SpellingList, index: number) => ({
           ...list,
           available_words: counts[list.id] || 0,
+          progress: progressByList.get(list.id) || (index === 0 ? { list_id: list.id, attempts_count: 0, best_score: 0, is_unlocked: true, is_passed: false, passed_at: null } : undefined),
         })))
         setLoading(false)
       }
@@ -84,6 +88,8 @@ export default function SpellingJourney() {
             const target = Math.max(0, Number(list.target_word_count) || 0)
             const ready = Math.min(list.available_words, target)
             const percent = target ? Math.round(ready / target * 100) : 0
+            const unlocked = Boolean(list.progress?.is_unlocked)
+            const passed = Boolean(list.progress?.is_passed)
             return (
               <article className="spelling-list-card" key={list.id}>
                 <div className="spelling-list-card-top">
@@ -93,14 +99,14 @@ export default function SpellingJourney() {
                 <strong>{list.title}</strong>
                 <div className="spelling-list-count"><b>{ready}</b> / {target} words ready</div>
                 <div className="skill-track"><span style={{ width: percent + '%' }}/></div>
-                <small className="spelling-list-foot">{ready >= target && target > 0 ? <><CheckCircle2 size={13}/> Ready to practise</> : 'Content preparation in progress'}</small>
-                <button className="spelling-open-button" onClick={() => setActiveList(list)} disabled={ready === 0}>Practise this list</button>
+                <small className="spelling-list-foot">{passed ? <><CheckCircle2 size={13}/> Mastered · Best score {list.progress?.best_score}/25</> : unlocked ? (ready >= 25 ? 'Unlocked · Ready to practise and test' : 'Unlocked · Content preparation in progress') : 'Locked · Pass the previous list first'}</small>
+                <button className="spelling-open-button" onClick={() => setActiveList(list)} disabled={ready === 0 || !unlocked}>{unlocked ? 'Practise this list' : 'Locked'}</button>
               </article>
             )
           })}
         </div>
       }
-      <p className="spelling-journey-note">Practise at your own pace. Assessment and automatic mastery tracking are the next development step.</p>
+      <p className="spelling-journey-note">Practise at your own pace. Pass each assessment with at least 24 out of 25 correct answers to unlock the next list.</p>
     </section>
   )
 }
