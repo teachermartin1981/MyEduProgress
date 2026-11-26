@@ -11,9 +11,9 @@ type Result = {
   answers: { question_number: number; submitted_answer: string; correct_answer: string; is_correct: boolean }[];
   unlocked_list: { title: string; grade_label: string; list_number: number } | null;
 }
-type Props = { list: ListInfo; onBack: () => void; studentSessionToken?: string }
+type Props = { list: ListInfo; onBack: () => void; studentSessionToken?: string; voiceURI?: string }
 
-function playSequence(question: Question) {
+function playSequence(question: Question, voiceURI = '') {
   if (!('speechSynthesis' in window)) return
   window.speechSynthesis.cancel()
   const parts = [question.spoken_word, question.context_sentence, 'Write down the word.', question.spoken_word]
@@ -22,14 +22,16 @@ function playSequence(question: Question) {
     if (index >= parts.length) return
     const utterance = new SpeechSynthesisUtterance(parts[index++])
     utterance.rate = 0.88
-    utterance.lang = 'en-US'
+    const voice = window.speechSynthesis.getVoices().find(item => item.voiceURI === voiceURI)
+    if (voice) { utterance.voice = voice; utterance.lang = voice.lang }
+    else utterance.lang = 'en-GB'
     utterance.onend = next
     window.speechSynthesis.speak(utterance)
   }
   next()
 }
 
-export default function SpellingAssessment({ list, onBack, studentSessionToken }: Props) {
+export default function SpellingAssessment({ list, onBack, studentSessionToken, voiceURI = '' }: Props) {
   const [attemptId, setAttemptId] = useState('')
   const [questions, setQuestions] = useState<Question[]>([])
   const [index, setIndex] = useState(0)
@@ -56,9 +58,9 @@ export default function SpellingAssessment({ list, onBack, studentSessionToken }
 
   const current = questions[index]
   useEffect(() => {
-    if (current && !result) playSequence(current)
+    if (current && !result) playSequence(current, voiceURI)
     return () => { window.speechSynthesis?.cancel() }
-  }, [current, result])
+  }, [current, result, voiceURI])
 
   function snapshot(): SavedAnswer {
     return { question_number: index + 1, answer, description_opened: showMeaning, replay_count: replays }
