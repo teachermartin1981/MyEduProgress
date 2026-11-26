@@ -581,3 +581,21 @@ footer{max-width:1160px;margin:auto;padding:22px 28px 28px;display:flex;justify-
 .spelling-voice-setting label{font-size:10px;font-weight:700;color:#8792a6}
 .spelling-voice-setting select{max-width:min(100%,280px);padding:7px 9px;border:1px solid #e1e6ef;border-radius:7px;background:#fff;color:#53617a;font:10px 'DM Sans',sans-serif}
 @media(max-width:600px){.spelling-prompt-compact{grid-template-columns:1fr;text-align:center}.spelling-prompt-compact .spelling-prompt-icon,.spelling-prompt-compact h3,.spelling-prompt-compact p,.spelling-audio-actions{grid-column:1;justify-self:center}.spelling-prompt-compact .spelling-prompt-icon{grid-row:auto}.spelling-audio-actions{flex-wrap:wrap;justify-content:center}.spelling-voice-setting{justify-content:space-between}}
+
+
+/* Compact spelling level tiles: mastery, status, and direct practice/test actions */
+.spelling-list-grid{grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:8px;margin-top:12px}
+.spelling-list-card-compact{padding:10px 11px;border-radius:9px;background:#fff}
+.spelling-list-card-compact .spelling-list-card-top{font-size:9px}
+.spelling-list-card-compact>strong{display:block;margin:6px 0 8px;font-size:10px;line-height:1.35;min-height:27px}
+.spelling-mastery-label{display:flex;align-items:center;justify-content:space-between;gap:6px;color:#8b95a8;font-size:9px}
+.spelling-mastery-label b{font-size:9px;color:#5367c9}
+.spelling-list-card-compact.is-passed .spelling-mastery-label b{color:#258052}
+.spelling-list-card-compact.is-locked .spelling-mastery-label b{color:#9aa3b3}
+.spelling-mastery-track{height:4px;margin-top:5px;overflow:hidden;border-radius:8px;background:#edf0f6}
+.spelling-mastery-track span{display:block;height:100%;border-radius:8px;background:#596bd8}
+.spelling-card-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:9px}
+.spelling-card-action{display:flex;align-items:center;justify-content:center;gap:4px;min-height:27px;padding:4px 6px;border:1px solid #dfe5f5;border-radius:6px;background:#f5f7ff;color:#5265c8;font:700 9px 'DM Sans',sans-serif;cursor:pointer}
+.spelling-card-test{background:#fff;border-color:#e4e8f0;color:#63718c}
+.spelling-card-action:disabled{opacity:.38;cursor:not-allowed}
+@media(max-width:600px){.spelling-list-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.spelling-list-card-compact{padding:9px}.spelling-list-card-compact>strong{font-size:9px;min-height:38px}.spelling-card-action{font-size:8px}}
