@@ -331,3 +331,16 @@ footer{max-width:1160px;margin:auto;padding:22px 28px 28px;display:flex;justify-
 .consent-check input{width:auto;margin-top:2px}
 .student-mode-switch{margin-bottom:14px}
 @media(max-width:600px){.independent-card{padding:18px}.independent-invite-form{grid-template-columns:1fr}.independent-invite-form .primary-button{width:100%}.independent-card-heading h2{font-size:17px}}
+
+
+.independent-plan-title{margin:7px 0;color:#263451;font:800 20px Manrope,sans-serif}
+.independent-plan-subtitle{margin:0;color:#78849a;font-size:12px;line-height:1.6}
+.independent-plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:17px}
+.independent-plan-option{position:relative;padding:17px;border:1px solid #e7ebf3;border-radius:12px;background:#fbfcff}
+.independent-plan-option.featured{border-color:#aebaf5;background:#f6f7ff}
+.independent-plan-option>span{color:#6e7b98;font-size:9px;font-weight:800;letter-spacing:1px}
+.independent-plan-option strong{display:block;margin:7px 0;color:#263451;font-size:26px;font-weight:800}
+.independent-plan-option strong small{margin-left:4px;color:#8490a4;font-size:11px;font-weight:500}
+.independent-plan-option p{margin:0;color:#7c879b;font-size:10px;line-height:1.6}
+.independent-plan-option em{display:inline-block;margin-top:9px;color:#586bd4;font-size:10px;font-style:normal;font-weight:800}
+@media(max-width:600px){.independent-plan-grid{grid-template-columns:1fr}}
