@@ -46,7 +46,7 @@ function speakSequence(parts: string[], voiceURI = '') {
   playNext()
 }
 
-export default function SpellingPractice({ list, onBack, studentSessionToken }: Props) {
+export default function SpellingPractice({ list, onBack, studentSessionToken, initialAssessment = false }: Props) {
   const [words, setWords] = useState<WordRow[]>([])
   const [index, setIndex] = useState(0)
   const [answer, setAnswer] = useState('')
@@ -54,7 +54,7 @@ export default function SpellingPractice({ list, onBack, studentSessionToken }: 
   const [showMeaning, setShowMeaning] = useState(true)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [assessmentMode, setAssessmentMode] = useState(false)
+  const [assessmentMode, setAssessmentMode] = useState(initialAssessment)
   const [showContext, setShowContext] = useState(false)
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([])
   const [voiceURI, setVoiceURI] = useState(() => { try { return localStorage.getItem('eduassess-spelling-voice') || '' } catch { return '' } })
