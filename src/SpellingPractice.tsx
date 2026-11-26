@@ -14,6 +14,7 @@ type WordRow = {
 type Props = {
   list: { id: string; title: string; grade_label: string; list_number: number }
   onBack: () => void
+  studentSessionToken?: string
 }
 
 function speak(text: string, rate = 0.86) {
@@ -41,7 +42,7 @@ function speakSequence(parts: string[]) {
   playNext()
 }
 
-export default function SpellingPractice({ list, onBack }: Props) {
+export default function SpellingPractice({ list, onBack, studentSessionToken }: Props) {
   const [words, setWords] = useState<WordRow[]>([])
   const [index, setIndex] = useState(0)
   const [answer, setAnswer] = useState('')
@@ -71,7 +72,7 @@ export default function SpellingPractice({ list, onBack }: Props) {
     return () => { active = false; window.speechSynthesis?.cancel() }
   }, [list.id])
 
-  if (assessmentMode) return <SpellingAssessment list={list} onBack={() => setAssessmentMode(false)} />
+  if (assessmentMode) return <SpellingAssessment list={list} studentSessionToken={studentSessionToken} onBack={() => setAssessmentMode(false)} />
 
   const current = words[index]
   const accepted = useMemo(() => current ? [current.word, ...(current.accepted_spellings || [])].map(x => x.trim().toLocaleLowerCase()) : [], [current])
