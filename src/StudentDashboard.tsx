@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { ArrowLeft, BookOpen, BookOpenCheck, BookText, CheckCircle2, ChevronRight, Clock3, GraduationCap, LockKeyhole, Medal, SpellCheck, Trophy } from 'lucide-react'
+import SpellingJourney from './SpellingJourney'
 
 type Props = { onBack: () => void }
 
 const journeys = [
-  { id: 'spelling', title: 'Spelling Journey', subtitle: 'Levels, practice and achievements', level: 'Level 3 in progress', icon: SpellCheck, detail: 'Continue your spelling levels. Practise word patterns, learn new words and review words that need more practice.' },
   { id: 'placement', title: 'Placement Exams', subtitle: 'Discover and track your CEFR level', level: 'Last result: A2', icon: GraduationCap, detail: 'Your latest placement result is A2. Previous placement results will remain here so you can compare your progress over time.' },
   { id: 'grammar', title: 'Grammar Journey', subtitle: 'Topics mastered and topics to practise', level: '12 topics explored', icon: BookOpen, detail: 'See each grammar topic as mastered, needs practice or not studied yet. Your next recommended step will be based on your assessment results.' },
   { id: 'reading', title: 'Reading & Writing Journey', subtitle: 'Track reading and writing development', level: '2 skills in progress', icon: BookText, detail: 'Follow your reading comprehension and writing development, including teacher feedback and rubric results.' },
@@ -54,6 +54,7 @@ export default function StudentDashboard({ onBack }: Props) {
         </section>
         <section className="student-section">
           <div className="student-section-heading"><div><h2>My Learning Journeys</h2><p>Choose a journey and keep building your skills.</p></div></div>
+          <SpellingJourney />
           <div className="student-journey-grid">{journeys.map(item => { const Icon = item.icon; const expanded = openJourney === item.id; return <article className={'student-journey ' + (expanded ? 'expanded' : '')} key={item.id}><button onClick={() => setOpenJourney(expanded ? null : item.id)} aria-expanded={expanded}><span className={'journey-icon journey-' + item.id}><Icon size={21}/></span><span className="journey-copy"><strong>{item.title}</strong><small>{item.subtitle}</small><em>{item.level}</em></span><ChevronRight className="journey-chevron" size={18}/></button>{expanded && <p className="journey-detail">{item.detail}</p>}</article> })}</div>
         </section>
         <section className="student-section">
