@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import StudentDashboard from './StudentDashboard'
 import ClassManagement from './ClassManagement'
 import ActivityManager from './ActivityManager'
@@ -39,6 +39,21 @@ export default function App() {
   const [independentUser, setIndependentUser] = useState<IndependentUser | null>(null)
   const [schoolStudent, setSchoolStudent] = useState<SchoolStudent | null>(null)
   const [schoolSessionToken, setSchoolSessionToken] = useState(() => sessionStorage.getItem('myedup_school_session') || '')
+
+  useEffect(() => {
+    if (!schoolSessionToken || schoolStudent) return
+    let active = true
+    supabase.functions.invoke('school-student-auth', {
+      body: { action: 'validate', session_token: schoolSessionToken },
+    }).then(({ data, error }) => {
+      if (!active) return
+      if (error || !data?.valid) {
+        sessionStorage.removeItem('myedup_school_session')
+        setSchoolSessionToken('')
+      } else setSchoolStudent(data.student)
+    })
+    return () => { active = false }
+  }, [schoolSessionToken, schoolStudent])
 
   async function finishIndependentProfile(userId: string, fallbackName?: string) {
     const { data: profile, error } = await supabase.from('independent_student_profiles').select('display_name').eq('user_id', userId).maybeSingle()
