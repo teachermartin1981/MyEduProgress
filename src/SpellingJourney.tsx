@@ -21,6 +21,7 @@ export default function SpellingJourney() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [activeList, setActiveList] = useState<ListStatus | null>(null)
+  const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
     let active = true
@@ -50,7 +51,7 @@ export default function SpellingJourney() {
       }
 
       const { data: progressData } = await supabase.functions.invoke('spelling-assessment', { body: { action: 'get_progress' } })
-      const progressByList = new Map<string, Progress>((progressData?.progress || []).map((item: Progress) => [item.list_id, item]))
+      const progressByList = new Map<string, Progress>((progressData?.progress || []).map((item: Progress) => [item.list_id, item] as [string, Progress]))
       const counts = (words || []).reduce<Record<string, number>>((acc, row) => {
         acc[row.list_id] = (acc[row.list_id] || 0) + 1
         return acc
@@ -67,9 +68,9 @@ export default function SpellingJourney() {
     }
     void load()
     return () => { active = false }
-  }, [])
+  }, [refreshKey])
 
-  if (activeList) return <SpellingPractice list={activeList} onBack={() => setActiveList(null)} />
+  if (activeList) return <SpellingPractice list={activeList} onBack={() => { setActiveList(null); setRefreshKey(value => value + 1) }} />
 
   return (
     <section className="spelling-journey-panel">
