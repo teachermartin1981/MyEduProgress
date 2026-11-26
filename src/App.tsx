@@ -227,7 +227,7 @@ export default function App() {
     await supabase.auth.signOut(); setWorkspace(null); setIndependentUser(null); setNotice({ kind: 'info', text: 'You have signed out.' })
   }
 
-  if (schoolStudent && schoolSessionToken) return <SchoolStudentPortal student={schoolStudent} onSignOut={signOut} />
+  if (schoolStudent && schoolSessionToken) return <SchoolStudentPortal student={schoolStudent} sessionToken={schoolSessionToken} onSignOut={signOut} />
 
   if (independentUser) return <IndependentStudentPortal displayName={independentUser.displayName} onSignOut={signOut} />
 
