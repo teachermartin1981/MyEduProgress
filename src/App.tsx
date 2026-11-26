@@ -60,7 +60,7 @@ export default function App() {
     }
     const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password })
     if (error || !data.user) { setBusy(false); setNotice({ kind: 'error', text: error?.message || 'Sign-in failed.' }); return }
-    try { await finishIndependentProfile(data.user.id); setNotice({ kind: 'success', text: 'Welcome back!' }) } catch (e) { setNotice({ kind: 'error', text: e instanceof Error ? e.message : 'Student profile could not be loaded.' }) }
+    try { await acceptPendingTutorInvite(); await finishIndependentProfile(data.user.id); setNotice({ kind: 'success', text: 'Welcome back!' }) } catch (e) { setNotice({ kind: 'error', text: e instanceof Error ? e.message : 'Student profile could not be loaded.' }) }
     setBusy(false)
   }
 
@@ -94,6 +94,17 @@ export default function App() {
     })
   }
 
+  async function acceptPendingTutorInvite() {
+    const token = new URLSearchParams(window.location.search).get('tutor_invite')
+    if (!token) return false
+    const { data, error } = await supabase.functions.invoke('independent-students', { body: { action: 'accept_tutor_invite', token } })
+    const clean = new URL(window.location.href); clean.searchParams.delete('tutor_invite')
+    window.history.replaceState({}, '', clean.toString())
+    if (error || data?.error) throw new Error(data?.error || error.message)
+    setNotice({ kind: 'success', text: 'Tutor invitation accepted. You now have read-only access to the learner’s progress.' })
+    return true
+  }
+
   async function handleStaffLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setNotice(null); setBusy(true)
@@ -102,6 +113,7 @@ export default function App() {
       setBusy(false); setNotice({ kind: 'error', text: error?.message || 'Sign-in failed.' }); return
     }
     try {
+      await acceptPendingTutorInvite()
       const { data: existing, error: membershipError } = await supabase.from('workspace_memberships')
         .select('id').eq('user_id', data.user.id).eq('active', true).limit(1).maybeSingle()
       if (membershipError) throw new Error('Could not check your workspace membership.')
