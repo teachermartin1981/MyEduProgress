@@ -421,3 +421,62 @@ footer{max-width:1160px;margin:auto;padding:22px 28px 28px;display:flex;justify-
 .spelling-review-list strong{text-align:right}
 .spelling-assessment-result>.primary-button{display:inline-flex;align-items:center;justify-content:center;margin-top:12px}
 @media(max-width:600px){.spelling-assessment-launch{align-items:stretch;flex-direction:column}.spelling-assessment-launch .primary-button{justify-content:center}.spelling-review-list>div{grid-template-columns:22px 1fr 1fr;font-size:9px}}
+
+
+/* Teacher spelling progress reports */
+.teacher-spelling-reports{margin:22px 0;padding:22px;background:#fff;border:1px solid #e3e8f2;border-radius:15px}
+.teacher-spelling-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.teacher-spelling-heading h2{display:flex;align-items:center;gap:9px;margin:7px 0;color:#263451;font:800 20px Manrope,sans-serif}
+.teacher-spelling-heading h2 svg{color:#536bd4}
+.teacher-spelling-heading p{margin:0;color:#8792a6;font-size:11px;line-height:1.6}
+.teacher-spelling-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}
+.teacher-spelling-summary>div{display:flex;align-items:center;gap:10px;padding:13px;border:1px solid #e8ecf3;border-radius:10px;background:#fbfcff;color:#536bd4}
+.teacher-spelling-summary span{display:grid;gap:2px}
+.teacher-spelling-summary b{color:#2d3b58;font-size:18px}
+.teacher-spelling-summary small{color:#8792a6;font-size:9px}
+.teacher-spelling-layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px;margin-top:14px}
+.teacher-spelling-roster{padding:12px;border:1px solid #e8ecf3;border-radius:11px;background:#fbfcff}
+.teacher-spelling-roster h3{display:flex;justify-content:space-between;margin:0 0 10px;color:#34415d;font-size:12px}
+.teacher-spelling-roster h3 small{color:#8994a7}
+.teacher-spelling-roster button{display:grid;width:100%;gap:4px;padding:10px;text-align:left;border:0;border-radius:8px;background:transparent;color:#34415d;cursor:pointer}
+.teacher-spelling-roster button.selected{background:#edf1ff;color:#4057bf}
+.teacher-spelling-roster button span{font-size:11px;font-weight:800}
+.teacher-spelling-roster button small{color:#8a95a8;font-size:9px}
+.teacher-spelling-detail{min-width:0}
+.teacher-spelling-student-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 0 14px;border-bottom:1px solid #edf0f5}
+.teacher-spelling-student-head h3{margin:0 0 4px;color:#2d3b58;font:800 17px Manrope,sans-serif}
+.teacher-spelling-student-head p{margin:0;color:#8993a6;font-size:10px}
+.teacher-spelling-average{text-align:right}
+.teacher-spelling-average b{display:block;color:#536bd4;font:800 22px Manrope,sans-serif}
+.teacher-spelling-average small{color:#8993a6;font-size:9px}
+.teacher-spelling-subhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:17px 0 9px}
+.teacher-spelling-subhead h4{display:flex;align-items:center;gap:6px;margin:0;color:#35415c;font-size:12px}
+.teacher-spelling-subhead>span{color:#929bad;font-size:9px}
+.teacher-spelling-progress{display:grid;gap:6px}
+.teacher-spelling-progress>div{display:flex;align-items:center;gap:9px;padding:9px 10px;border:1px solid #edf0f5;border-radius:8px}
+.teacher-spelling-progress>div>span{display:grid;place-items:center;width:23px;height:23px;border-radius:7px;background:#f2f4f8;color:#8a95a8;font-size:11px}
+.teacher-spelling-progress>div>span.passed{background:#eaf7ef;color:#287c4c}
+.teacher-spelling-progress>div>span.unlocked{background:#edf1ff;color:#536bd4}
+.teacher-spelling-progress>div>div{display:grid;flex:1;gap:3px}
+.teacher-spelling-progress b{color:#3a4660;font-size:10px}
+.teacher-spelling-progress small{color:#929bad;font-size:9px}
+.teacher-spelling-progress>div>strong{color:#8a95a8;font-size:9px}
+.teacher-spelling-progress>div>strong:first-letter{color:inherit}
+.teacher-spelling-attempts{display:grid;border:1px solid #edf0f5;border-radius:9px;overflow:hidden}
+.teacher-spelling-attempt-row{display:grid;grid-template-columns:minmax(110px,1.5fr) minmax(90px,1fr) 55px 75px;gap:8px;align-items:center;padding:10px;border-top:1px solid #edf0f5;color:#48546c;font-size:10px}
+.teacher-spelling-attempt-row:first-child{border-top:0}
+.teacher-spelling-attempt-row.header{background:#f8f9fc;color:#8792a6;font-size:9px;font-weight:800}
+.teacher-spelling-attempt-row>span:first-child{display:grid;gap:3px}
+.teacher-spelling-attempt-row small{color:#929bad;font-size:9px;font-weight:400}
+.teacher-spelling-attempt-row b{font-size:10px}
+.teacher-spelling-attempt-row strong.passed{color:#287c4c}
+.teacher-spelling-attempt-row strong.retry{color:#a47732}
+.teacher-spelling-attempt-row time{color:#8994a7;font-size:9px}
+.teacher-spelling-weak{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.teacher-spelling-weak>div{display:grid;gap:4px;padding:10px;border:1px solid #edf0f5;border-radius:8px}
+.teacher-spelling-weak b{color:#35415c;font-size:11px}
+.teacher-spelling-weak span{color:#b16a45;font-size:9px}
+.teacher-spelling-weak small{color:#929bad;font-size:9px}
+.teacher-spelling-empty{padding:13px;border-radius:8px;background:#f8f9fc;color:#8994a7;font-size:10px}
+.teacher-spelling-note{display:flex;align-items:center;gap:6px;margin:15px 0 0;color:#929bad;font-size:9px;line-height:1.5}
+@media(max-width:700px){.teacher-spelling-layout{grid-template-columns:1fr}.teacher-spelling-roster{display:flex;flex-wrap:wrap;gap:5px}.teacher-spelling-roster h3{width:100%}.teacher-spelling-roster button{width:auto;min-width:130px}.teacher-spelling-summary>div{padding:10px 8px;gap:6px}.teacher-spelling-summary b{font-size:15px}.teacher-spelling-attempt-row{grid-template-columns:minmax(90px,1.4fr) minmax(65px,1fr) 45px 58px;gap:4px;padding:8px 6px;font-size:9px}.teacher-spelling-weak{grid-template-columns:1fr}}
