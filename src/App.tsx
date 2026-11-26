@@ -4,6 +4,7 @@ import ClassManagement from './ClassManagement'
 import ActivityManager from './ActivityManager'
 import IndependentStudentPortal from './IndependentStudentPortal'
 import TeacherSpellingReports from './TeacherSpellingReports'
+import SchoolStudentPortal from './SchoolStudentPortal'
 import { ArrowRight, BookOpenCheck, Building2, GraduationCap, LockKeyhole, Mail, ShieldCheck, Sparkles, UserPlus, LogOut, CheckCircle2 } from 'lucide-react'
 import { supabase } from './lib/supabase'
 
@@ -11,6 +12,7 @@ type Portal = 'student' | 'staff'
 type WorkspaceType = 'teacher' | 'school'
 type PlanId = 'teacher_monthly' | 'teacher_annual' | 'school_monthly'
 type IndependentUser = { id: string; displayName: string }
+type SchoolStudent = { id: string; student_number: string; display_name: string; workspace_id: string; workspace_name: string; class_id?: string | null; class_name?: string | null }
 type Notice = { kind: 'error' | 'success' | 'info'; text: string } | null
 type Workspace = { id: string; name: string; type: WorkspaceType; role: 'owner' | 'admin' | 'teacher' }
 
@@ -35,6 +37,8 @@ export default function App() {
   const [independentName, setIndependentName] = useState('')
   const [adultConfirmed, setAdultConfirmed] = useState(false)
   const [independentUser, setIndependentUser] = useState<IndependentUser | null>(null)
+  const [schoolStudent, setSchoolStudent] = useState<SchoolStudent | null>(null)
+  const [schoolSessionToken, setSchoolSessionToken] = useState(() => sessionStorage.getItem('myedup_school_session') || '')
 
   async function finishIndependentProfile(userId: string, fallbackName?: string) {
     const { data: profile, error } = await supabase.from('independent_student_profiles').select('display_name').eq('user_id', userId).maybeSingle()
@@ -49,7 +53,19 @@ export default function App() {
 
   async function handleStudentLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (studentMode === 'school') { setNotice({ kind: 'info', text: 'School Student ID and PAC sign-in is being connected to the secure student login service.' }); return }
+    if (studentMode === 'school') {
+      setBusy(true); setNotice(null)
+      const { data, error } = await supabase.functions.invoke('school-student-auth', {
+        body: { action: 'login', student_id: studentId, pac },
+      })
+      setBusy(false)
+      if (error || data?.error) { setNotice({ kind: 'error', text: data?.error || error.message || 'Student login failed.' }); return }
+      sessionStorage.setItem('myedup_school_session', data.session_token)
+      setSchoolSessionToken(data.session_token)
+      setSchoolStudent(data.student)
+      setPac('')
+      return
+    }
     setBusy(true); setNotice(null)
     if (studentMode === 'independent-signup') {
       if (!adultConfirmed) { setBusy(false); setNotice({ kind: 'error', text: 'A parent or legal guardian must complete registration for learners under 18. Please confirm adult/guardian responsibility.' }); return }
@@ -188,8 +204,15 @@ export default function App() {
   }
 
   async function signOut() {
+    if (schoolSessionToken) {
+      await supabase.functions.invoke('school-student-auth', { body: { action: 'logout', session_token: schoolSessionToken } })
+    }
+    sessionStorage.removeItem('myedup_school_session')
+    setSchoolSessionToken(''); setSchoolStudent(null)
     await supabase.auth.signOut(); setWorkspace(null); setIndependentUser(null); setNotice({ kind: 'info', text: 'You have signed out.' })
   }
+
+  if (schoolStudent && schoolSessionToken) return <SchoolStudentPortal student={schoolStudent} onSignOut={signOut} />
 
   if (independentUser) return <IndependentStudentPortal displayName={independentUser.displayName} onSignOut={signOut} />
 
@@ -278,7 +301,7 @@ export default function App() {
                       {studentMode === 'school' ? <>
                         <label>Student ID<input value={studentId} onChange={e=>setStudentId(e.target.value)} placeholder="Enter your Student ID" required/></label>
                         <label>Personal Access Code<div className="input-wrap"><LockKeyhole size={17}/><input value={pac} onChange={e=>setPac(e.target.value)} type="password" placeholder="Enter your access code" required/></div></label>
-                        <button className="primary-button">Student login <ArrowRight size={17}/></button>
+                        <button className="primary-button" disabled={busy}>{busy ? "Signing in…" : "Student login"} <ArrowRight size={17}/></button>
                         <p className="form-help">Ask your teacher if you need help with your login details.</p>
                       </> : <>
                         {studentMode === 'independent-signup' && <label>Your name<input value={independentName} onChange={e=>setIndependentName(e.target.value)} placeholder="Student name" required/></label>}
