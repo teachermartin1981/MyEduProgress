@@ -554,3 +554,12 @@ footer{max-width:1160px;margin:auto;padding:22px 28px 28px;display:flex;justify-
 .student-skill-progress-note{margin-top:12px;font-size:11px;color:#8995aa}
 @media(max-width:1000px){.student-skill-progress-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:680px){.student-skill-progress-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.student-skill-progress-card{min-height:175px;padding:14px 12px}}
+
+/* Keep each skill score aligned on the right side of its card */
+.student-skill-progress-card{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto auto 1fr;column-gap:12px;row-gap:3px;align-items:center;min-height:142px;padding:15px 16px}
+.student-skill-icon{grid-column:1;grid-row:1;width:34px;height:34px;margin:0 0 5px}
+.student-skill-progress-card>strong{grid-column:1;grid-row:2;align-self:end}
+.student-skill-progress-card>b{grid-column:2;grid-row:1 / span 3;align-self:center;margin:0;font-size:29px;white-space:nowrap}
+.student-skill-progress-card>em{grid-column:1;grid-row:3;margin-top:2px}
+.student-skill-progress-card>small{grid-column:1 / -1;grid-row:4;padding-top:10px;margin-top:4px}
+@media(max-width:680px){.student-skill-progress-card{min-height:132px;padding:12px 11px;column-gap:7px}.student-skill-progress-card>b{font-size:25px}.student-skill-progress-card>small{font-size:9px}}
