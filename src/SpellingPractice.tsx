@@ -24,6 +24,22 @@ function speak(text: string, rate = 0.86) {
   window.speechSynthesis.speak(utterance)
 }
 
+function speakSequence(parts: string[]) {
+  if (!('speechSynthesis' in window)) return
+  window.speechSynthesis.cancel()
+  const queue = [...parts]
+  const playNext = () => {
+    const text = queue.shift()
+    if (!text) return
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.rate = 0.88
+    utterance.lang = 'en-US'
+    utterance.onend = playNext
+    window.speechSynthesis.speak(utterance)
+  }
+  playNext()
+}
+
 export default function SpellingPractice({ list, onBack }: Props) {
   const [words, setWords] = useState<WordRow[]>([])
   const [index, setIndex] = useState(0)
@@ -59,10 +75,7 @@ export default function SpellingPractice({ list, onBack }: Props) {
 
   function replay() {
     if (!current) return
-    speak(current.word)
-    window.setTimeout(() => speak(current.context_sentence, 0.9), 950)
-    window.setTimeout(() => speak('Write down the word.', 0.9), 3600)
-    window.setTimeout(() => speak(current.word), 4700)
+    speakSequence([current.word, current.context_sentence, 'Write down the word.', current.word])
   }
 
   function next() {
