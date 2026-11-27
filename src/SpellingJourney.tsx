@@ -11,6 +11,9 @@ type SpellingList = {
   list_number: number
   title: string
   target_word_count: number
+  cefr_reference: string | null
+  skill_focus: string | null
+  common_core_standards: string[]
 }
 
 type Progress = { list_id: string; attempts_count: number; best_score: number; is_unlocked: boolean; is_passed: boolean; passed_at: string | null }
@@ -33,7 +36,7 @@ export default function SpellingJourney({ studentSessionToken }: Props) {
       setError('')
       const { data: curriculum, error: curriculumError } = await supabase
         .from('spelling_curriculum_lists')
-        .select('id, grade_code, grade_label, grade_order, list_number, title, target_word_count')
+        .select('id, grade_code, grade_label, grade_order, list_number, title, target_word_count, cefr_reference, skill_focus, common_core_standards')
         .eq('is_published', true)
         .order('grade_order')
         .order('list_number')
@@ -99,10 +102,11 @@ export default function SpellingJourney({ studentSessionToken }: Props) {
             const passed = Boolean(list.progress?.is_passed)
             const ready = list.available_words >= 25
             const status = passed ? 'Passed' : unlocked ? 'Active' : 'Locked'
-            const label = list.grade_code === 'K' ? 'Foundation' : list.grade_label
             return <article className={`spelling-list-card spelling-list-card-mini ${passed ? 'is-passed' : unlocked ? 'is-active' : 'is-locked'}`} key={list.id}>
-              <div className="spelling-mini-top"><div><b>{label}</b><span>List {list.list_number}</span></div><span className={`spelling-status-pill ${passed ? "status-passed" : unlocked ? "status-active" : "status-locked"}`}>{status}</span></div>
+              <div className="spelling-mini-top"><div><b>Foundation</b><span>List {list.list_number}</span></div><span className={`spelling-status-pill ${passed ? "status-passed" : unlocked ? "status-active" : "status-locked"}`}>{status}</span></div>
               <strong title={list.title}>{list.title}</strong>
+              {list.cefr_reference && <div className="spelling-mastery-label"><span>CEFR: {list.cefr_reference}</span></div>}
+              {list.skill_focus && <p className="spelling-journey-note">{list.skill_focus}</p>}
               <div className="spelling-mastery-label"><span>{practiced}/{target} practised · {mastered} mastered</span></div>
               <div className="spelling-mastery-track spelling-dual-track"><span className="spelling-practised-fill" style={{width:(target ? practiced/target*100 : 0)+'%'}}/><span className="spelling-mastered-fill" style={{width:(target ? mastered/target*100 : 0)+'%'}}/></div>
               <div className="spelling-card-actions spelling-card-actions-three">
