@@ -65,6 +65,8 @@ export default function SpellingJourney({ studentSessionToken }: Props) {
         setLists((curriculum || []).map((list: SpellingList, index: number) => ({
           ...list,
           available_words: counts[list.id] || 0,
+          practiced_words: Number(wordProgress[list.id]?.practiced || 0),
+          mastered_words: Number(wordProgress[list.id]?.mastered || 0),
           progress: progressByList.get(list.id) || (index === 0 ? { list_id: list.id, attempts_count: 0, best_score: 0, is_unlocked: true, is_passed: false, passed_at: null } : undefined),
         })))
         setLoading(false)
