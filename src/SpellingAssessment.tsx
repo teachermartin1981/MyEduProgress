@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ArrowLeft, ArrowRight, CheckCircle2, Eye, EyeOff, Headphones, Loader2, Volume2 } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle2, Eye, EyeOff, Headphones, Loader2, Volume2, ChevronDown, ChevronUp } from 'lucide-react'
 import { supabase } from './lib/supabase'
 
 type ListInfo = { id: string; title: string; grade_label: string; list_number: number }
@@ -38,6 +38,7 @@ export default function SpellingAssessment({ list, onBack, studentSessionToken, 
   const [answer, setAnswer] = useState('')
   const [saved, setSaved] = useState<SavedAnswer[]>([])
   const [showMeaning, setShowMeaning] = useState(false)
+  const [showContext, setShowContext] = useState(false)
   const [replays, setReplays] = useState(0)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -75,7 +76,7 @@ export default function SpellingAssessment({ list, onBack, studentSessionToken, 
   function replay() {
     if (!current || replays >= 2) return
     setReplays(value => value + 1)
-    playSequence(current)
+    playSequence(current, voiceURI)
   }
   async function submit() {
     if (!attemptId || questions.length !== 25) return
@@ -108,16 +109,16 @@ export default function SpellingAssessment({ list, onBack, studentSessionToken, 
         <div className="spelling-review-list">{result.answers.map(item => <div key={item.question_number} className={item.is_correct ? 'correct' : 'retry'}><span>{item.question_number}.</span><span>{item.submitted_answer || 'No answer'}</span><strong>{item.correct_answer}</strong></div>)}</div>
         <button className="primary-button" onClick={onBack}>Return to spelling journey</button>
       </div> : current && <>
-        <div className="spelling-assessment-rules"><strong>Listen carefully.</strong> Each word is played automatically. You may replay it twice. The meaning is optional. Your answers and score will be shown after you submit all 25 questions.</div>
+        <div className="spelling-assessment-rules">25 words · 2 additional replays · 24 correct to pass</div>
         <div className="spelling-practice-progress"><span>Question {index + 1} of 25</span><div className="skill-track"><span style={{ width: ((index + 1) / 25 * 100) + '%' }}/></div></div>
-        <div className="spelling-prompt">
-          <div className="spelling-prompt-icon"><Headphones size={24}/></div>
-          <h3>Listen and spell</h3>
-          <p>Listen to the word and the sentence. Then type the word you hear.</p>
-          <button className="primary-button spelling-audio-button" onClick={replay} disabled={replays >= 2}><Volume2 size={18}/> Replay audio ({2 - replays} left)</button>
-          <small>{replays} of 2 additional replays used</small>
+        <div className="spelling-test-audio-row">
+          <button className="spelling-play-round" onClick={replay} disabled={replays >= 2} aria-label="Replay word and sentence"><Volume2 size={18}/></button>
+          <span>Play word and sentence</span><small>{2-replays} replays left</small>
         </div>
-        <div className="spelling-context"><span>CONTEXT SENTENCE</span><p>{current.context_sentence}</p></div>
+        <div className="spelling-context spelling-context-collapsed">
+          <button className="spelling-context-toggle" onClick={()=>setShowContext(v=>!v)}><span>SHOW CONTEXT SENTENCE</span>{showContext?<ChevronUp size={14}/>:<ChevronDown size={14}/>}</button>
+          {showContext && <p>{current.context_sentence}</p>}
+        </div>
         <div className="spelling-meaning">
           <button onClick={() => setShowMeaning(value => !value)}>{showMeaning ? <EyeOff size={15}/> : <Eye size={15}/>} {showMeaning ? 'Hide meaning' : 'Show meaning (optional)'}</button>
           {showMeaning && <p>{current.english_description}</p>}
