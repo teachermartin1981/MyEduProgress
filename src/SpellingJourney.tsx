@@ -14,7 +14,7 @@ type SpellingList = {
 }
 
 type Progress = { list_id: string; attempts_count: number; best_score: number; is_unlocked: boolean; is_passed: boolean; passed_at: string | null }
-type ListStatus = SpellingList & { available_words: number; progress?: Progress }
+type ListStatus = SpellingList & { available_words: number; practiced_words: number; mastered_words: number; progress?: Progress }
 
 type Props = { studentSessionToken?: string }
 
@@ -55,6 +55,7 @@ export default function SpellingJourney({ studentSessionToken }: Props) {
 
       const { data: progressData } = await supabase.functions.invoke('spelling-assessment', { body: { action: 'get_progress', ...(studentSessionToken ? { session_token: studentSessionToken } : {}) } })
       const progressByList = new Map<string, Progress>((progressData?.progress || []).map((item: Progress) => [item.list_id, item] as [string, Progress]))
+      const wordProgress = progressData?.list_word_stats || {}
       const counts = (words || []).reduce<Record<string, number>>((acc, row) => {
         acc[row.list_id] = (acc[row.list_id] || 0) + 1
         return acc
@@ -90,7 +91,8 @@ export default function SpellingJourney({ studentSessionToken }: Props) {
         <div className="spelling-list-grid spelling-list-grid-mini">
           {lists.map(list => {
             const target = Math.max(0, Number(list.target_word_count) || 0)
-            const mastered = Number(list.progress?.words_mastered || 0)
+            const mastered = list.mastered_words
+            const practiced = list.practiced_words
             const unlocked = Boolean(list.progress?.is_unlocked)
             const passed = Boolean(list.progress?.is_passed)
             const ready = list.available_words >= 25
@@ -99,8 +101,8 @@ export default function SpellingJourney({ studentSessionToken }: Props) {
             return <article className={`spelling-list-card spelling-list-card-mini ${passed ? 'is-passed' : unlocked ? 'is-active' : 'is-locked'}`} key={list.id}>
               <div className="spelling-mini-top"><b>{label}</b><span>List {list.list_number}</span></div>
               <strong title={list.title}>{list.title}</strong>
-              <div className="spelling-mastery-label"><span>{mastered}/{target} mastered</span><b>{status}</b></div>
-              <div className="spelling-mastery-track"><span style={{width:(target ? mastered/target*100 : 0)+'%'}}/></div>
+              <div className="spelling-mastery-label"><span>{practiced}/{target} practised · {mastered} mastered</span><b>{status}</b></div>
+              <div className="spelling-mastery-track spelling-dual-track"><span className="spelling-practised-fill" style={{width:(target ? practiced/target*100 : 0)+'%'}}/><span className="spelling-mastered-fill" style={{width:(target ? mastered/target*100 : 0)+'%'}}/></div>
               <div className="spelling-card-actions spelling-card-actions-three">
                 <button onClick={()=>{setActiveList(list);setActiveMode('progress')}} disabled={!unlocked || !ready}><ChartNoAxesColumn size={12}/>Progress</button>
                 <button onClick={()=>{setActiveList(list);setActiveMode('practice')}} disabled={!unlocked || !ready}><BookOpen size={12}/>Practice</button>
