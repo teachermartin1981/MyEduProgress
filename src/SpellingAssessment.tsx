@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ArrowLeft, ArrowRight, CheckCircle2, Eye, EyeOff, Headphones, Loader2, Volume2, ChevronDown, ChevronUp } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle2, Eye, EyeOff, Loader2, Volume2, ChevronDown, ChevronUp } from 'lucide-react'
 import { supabase } from './lib/supabase'
 
 type ListInfo = { id: string; title: string; grade_label: string; list_number: number }
