@@ -653,3 +653,14 @@ footer{max-width:1160px;margin:auto;padding:22px 28px 28px;display:flex;justify-
 .spelling-status-pill.status-active{background:#edf2ff;color:#5268c9}
 .spelling-status-pill.status-passed{background:#e8f7ef;color:#238354}
 .spelling-status-pill.status-locked{background:#f0f1f4;color:#8b93a2}
+
+
+/* Spelling progress word bank — visual tile layout inspired by EduAssess */
+.spelling-word-bank-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin-top:14px}
+.spelling-word-bank-tile{min-width:0;min-height:62px;padding:12px 7px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:5px;text-align:center;border-radius:13px;background:#eef2f8;border:1px solid #e8edf5;color:#66748a;overflow-wrap:anywhere}
+.spelling-word-bank-tile strong{font-size:12px;line-height:1.35;font-weight:700;color:#59677d}
+.spelling-word-bank-tile small{font-size:10px;line-height:1.35;color:#6f7d90}
+.spelling-word-bank-tile.is-learned{background:#e5f7ef;border-color:#d4f0e3}
+.spelling-word-bank-tile.is-learned strong,.spelling-word-bank-tile.is-learned small{color:#00845f}
+.spelling-word-check{font-weight:800}
+@media(max-width:520px){.spelling-word-bank-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.spelling-word-bank-tile{min-height:72px;padding:10px 4px;border-radius:11px}.spelling-word-bank-tile strong{font-size:11px}.spelling-word-bank-tile small{font-size:9px}}
