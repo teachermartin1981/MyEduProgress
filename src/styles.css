@@ -641,3 +641,8 @@ footer{max-width:1160px;margin:auto;padding:22px 28px 28px;display:flex;justify-
 .spelling-assessment .spelling-practice-progress{margin-bottom:9px}
 .spelling-assessment .spelling-answer-form{margin-top:10px}
 @media(max-width:600px){.spelling-list-grid-mini{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.spelling-list-card-mini{padding:7px}.spelling-list-card-mini>strong{font-size:8px;min-height:30px}.spelling-card-actions-three button{font-size:7px}.spelling-word-history-row{grid-template-columns:minmax(55px,1fr) repeat(3,minmax(45px,.8fr));font-size:8px;padding:7px 6px}.spelling-word-history-row strong{font-size:9px}.spelling-progress-summary{gap:5px;flex-wrap:wrap}}
+
+/* Dual spelling progress: green mastered words overlay the blue practiced total */
+.spelling-dual-track{position:relative;height:5px;background:#edf0f6;overflow:hidden}
+.spelling-dual-track .spelling-practised-fill{position:absolute;inset:0 auto 0 0;height:100%;background:#477bd8;border-radius:8px;z-index:1}
+.spelling-dual-track .spelling-mastered-fill{position:absolute;inset:0 auto 0 0;height:100%;background:#27a36a;border-radius:8px;z-index:2}
