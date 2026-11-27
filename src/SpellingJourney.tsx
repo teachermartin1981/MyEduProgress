@@ -101,9 +101,9 @@ export default function SpellingJourney({ studentSessionToken }: Props) {
             const status = passed ? 'Passed' : unlocked ? 'Active' : 'Locked'
             const label = list.grade_code === 'K' ? 'Foundation' : list.grade_label
             return <article className={`spelling-list-card spelling-list-card-mini ${passed ? 'is-passed' : unlocked ? 'is-active' : 'is-locked'}`} key={list.id}>
-              <div className="spelling-mini-top"><b>{label}</b><span>List {list.list_number}</span></div>
+              <div className="spelling-mini-top"><div><b>{label}</b><span>List {list.list_number}</span></div><span className={`spelling-status-pill ${passed ? "status-passed" : unlocked ? "status-active" : "status-locked"}`}>{status}</span></div>
               <strong title={list.title}>{list.title}</strong>
-              <div className="spelling-mastery-label"><span>{practiced}/{target} practised · {mastered} mastered</span><b>{status}</b></div>
+              <div className="spelling-mastery-label"><span>{practiced}/{target} practised · {mastered} mastered</span></div>
               <div className="spelling-mastery-track spelling-dual-track"><span className="spelling-practised-fill" style={{width:(target ? practiced/target*100 : 0)+'%'}}/><span className="spelling-mastered-fill" style={{width:(target ? mastered/target*100 : 0)+'%'}}/></div>
               <div className="spelling-card-actions spelling-card-actions-three">
                 <button onClick={()=>{setActiveList(list);setActiveMode('progress')}} disabled={!unlocked || !ready}><ChartNoAxesColumn size={12}/>Progress</button>
