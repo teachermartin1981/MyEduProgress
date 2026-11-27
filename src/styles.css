@@ -599,3 +599,45 @@ footer{max-width:1160px;margin:auto;padding:22px 28px 28px;display:flex;justify-
 .spelling-card-test{background:#fff;border-color:#e4e8f0;color:#63718c}
 .spelling-card-action:disabled{opacity:.38;cursor:not-allowed}
 @media(max-width:600px){.spelling-list-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.spelling-list-card-compact{padding:9px}.spelling-list-card-compact>strong{font-size:9px;min-height:38px}.spelling-card-action{font-size:8px}}
+
+
+/* Spelling Journey: very compact levels and three clear actions */
+.spelling-journey-panel{padding:13px}
+.spelling-list-grid-mini{grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:7px;margin-top:10px}
+.spelling-list-card-mini{padding:8px 9px;border-radius:8px}
+.spelling-mini-top{display:flex;justify-content:space-between;align-items:center;font-size:9px;color:#5266cc}
+.spelling-mini-top span{color:#8a95a8;font-weight:600}
+.spelling-list-card-mini>strong{display:block;margin:5px 0 7px;font-size:9px;line-height:1.3;min-height:24px;color:#34415b}
+.spelling-list-card-mini .spelling-mastery-label{font-size:8px}
+.spelling-list-card-mini .spelling-mastery-label b{font-size:8px}
+.spelling-list-card-mini .spelling-mastery-track{height:3px;margin-top:4px}
+.spelling-card-actions-three{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin-top:7px}
+.spelling-card-actions-three button{display:flex;align-items:center;justify-content:center;gap:3px;min-width:0;min-height:24px;padding:3px 2px;border:1px solid #e2e7f2;border-radius:5px;background:#f7f8fc;color:#5667bd;font:700 8px 'DM Sans',sans-serif;cursor:pointer}
+.spelling-card-actions-three button:disabled{opacity:.35;cursor:not-allowed}
+.spelling-card-actions-three button svg{width:11px;height:11px}
+.spelling-word-workspace{padding:10px 0}
+.spelling-practice-compact-prompt,.spelling-test-audio-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #e4e9f4;border-radius:9px;background:#f8f9ff}
+.spelling-play-round{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;border:0;border-radius:50%;background:#566bd7;color:white;cursor:pointer}
+.spelling-practice-compact-prompt>div{display:flex;flex-direction:column;gap:2px;flex:1}
+.spelling-practice-compact-prompt strong{font-size:12px;color:#35415c}
+.spelling-practice-compact-prompt small{font-size:10px;color:#8792a6}
+.spelling-word-only{display:flex;align-items:center;gap:4px;border:0;background:transparent;color:#5669c7;font-size:9px;font-weight:700;cursor:pointer}
+.spelling-test-audio-row>span{font-size:11px;font-weight:700;color:#35415c;flex:1}
+.spelling-test-audio-row>small{font-size:9px;color:#8994a8}
+.spelling-answer-compact input{min-height:42px}
+.spelling-answer-compact>.primary-button{min-height:34px;padding:7px 14px}
+.spelling-copy-word{display:inline-flex;align-items:center;gap:4px;margin-left:5px;padding:4px 7px;border:1px solid #e0e5f1;border-radius:5px;background:white;color:#5667bd;font-size:9px;cursor:pointer}
+.spelling-progress-summary{display:flex;justify-content:space-between;align-items:center;margin:12px 0;padding:10px 12px;border-radius:8px;background:#f7f8fc}
+.spelling-progress-summary strong{font-size:12px;color:#35415c}
+.spelling-progress-summary span{font-size:10px;color:#8792a6}
+.spelling-word-history{border:1px solid #e8ecf3;border-radius:8px;overflow:hidden}
+.spelling-word-history-row{display:grid;grid-template-columns:minmax(70px,1.2fr) repeat(3,minmax(55px,.8fr));gap:5px;align-items:center;padding:8px 10px;border-bottom:1px solid #edf0f5;font-size:10px}
+.spelling-word-history-row:last-child{border-bottom:0}
+.spelling-word-history-row strong{font-size:11px;color:#35415c}
+.spelling-word-history-row span{text-align:right;color:#8290a6}
+.spelling-word-history-row .word-correct-count{color:#238456}
+.spelling-word-history-row .word-incorrect-count{color:#bd6258}
+.spelling-assessment-rules{margin:0 0 9px;padding:7px 10px;border-radius:6px;background:#f7f8fc;color:#7e8aa0;font-size:9px}
+.spelling-assessment .spelling-practice-progress{margin-bottom:9px}
+.spelling-assessment .spelling-answer-form{margin-top:10px}
+@media(max-width:600px){.spelling-list-grid-mini{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.spelling-list-card-mini{padding:7px}.spelling-list-card-mini>strong{font-size:8px;min-height:30px}.spelling-card-actions-three button{font-size:7px}.spelling-word-history-row{grid-template-columns:minmax(55px,1fr) repeat(3,minmax(45px,.8fr));font-size:8px;padding:7px 6px}.spelling-word-history-row strong{font-size:9px}.spelling-progress-summary{gap:5px;flex-wrap:wrap}}
