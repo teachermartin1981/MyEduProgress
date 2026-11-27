@@ -110,7 +110,7 @@ export default function SpellingPractice({ list, onBack, studentSessionToken, in
   return <section className="spelling-practice spelling-word-workspace">
     <div className="spelling-practice-top"><button className="spelling-back" onClick={()=>{window.speechSynthesis?.cancel();onBack()}}><ArrowLeft size={15}/> Spelling lists</button><span>{list.grade_label === 'Kindergarten' ? 'Foundation' : list.grade_label} · List {list.list_number}</span></div>
     <h2>{list.title}</h2>
-    {mode === 'progress' ? <>
+    {loading ? <p className="spelling-state"><Loader2 size={16}/> Loading word history…</p> : mode === 'progress' ? <>
       <div className="spelling-progress-summary"><strong>Word progress</strong><span>{words.filter(w => (stats[w.id]?.attempts || 0) > 0).length} of {words.length} words practised</span></div>
       <div className="spelling-word-history">
         {words.map(word => { const s=stats[word.id] || {attempts:0,correct:0,incorrect:0}; return <div className="spelling-word-history-row" key={word.id}>
