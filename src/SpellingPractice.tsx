@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import { ArrowLeft, ArrowRight, CheckCircle2, Eye, EyeOff, Headphones, RotateCcw, Volume2, ChevronDown, ChevronUp, Copy, Check, Loader2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { ArrowLeft, ArrowRight, Eye, EyeOff, RotateCcw, Volume2, ChevronDown, ChevronUp, Copy, Check, Loader2 } from 'lucide-react'
 import { supabase } from './lib/supabase'
 import SpellingAssessment from './SpellingAssessment'
 
@@ -26,7 +26,7 @@ function play(parts: string[], voiceURI: string, rate = 0.88) {
 }
 
 export default function SpellingPractice({ list, onBack, studentSessionToken, initialMode = 'practice' }: Props) {
-  const [mode, setMode] = useState<Mode>(initialMode)
+  const mode = initialMode
   const [words, setWords] = useState<WordRow[]>([])
   const [stats, setStats] = useState<Record<string, WordStat>>({})
   const [index, setIndex] = useState(0)
@@ -42,7 +42,6 @@ export default function SpellingPractice({ list, onBack, studentSessionToken, in
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([])
   const [voiceURI, setVoiceURI] = useState(() => { try { return localStorage.getItem('eduassess-spelling-voice') || '' } catch { return '' } })
   const current = words[index]
-  const accepted = useMemo(() => current ? [current.word, ...(current.accepted_spellings || [])].map(x => x.trim().toLocaleLowerCase()) : [], [current])
 
   useEffect(() => {
     if (!('speechSynthesis' in window)) return
