@@ -4,7 +4,7 @@ import { supabase } from './lib/supabase'
 import SpellingAssessment from './SpellingAssessment'
 
 type WordRow = { id: string; word: string; english_description: string; context_sentence: string; accepted_spellings: string[]; sort_order: number }
-type WordStat = { attempts: number; correct: number; incorrect: number }
+type WordStat = { attempts: number; correct: number; incorrect: number; last_is_correct?: boolean | null; last_attempt_at?: string | null }
 type Mode = 'progress' | 'practice' | 'test'
 type Props = { list: { id: string; title: string; grade_label: string; list_number: number }; onBack: () => void; studentSessionToken?: string; initialMode?: Mode }
 
@@ -112,7 +112,7 @@ export default function SpellingPractice({ list, onBack, studentSessionToken, in
     {loading ? <p className="spelling-state"><Loader2 size={16}/> Loading word history…</p> : mode === 'progress' ? <>
       <div className="spelling-progress-summary"><strong>Word progress</strong><span>{words.filter(w => (stats[w.id]?.attempts || 0) > 0).length} of {words.length} words practised</span></div>
       <div className="spelling-word-bank-grid">
-        {words.map(word => { const s=stats[word.id] || {attempts:0,correct:0,incorrect:0}; const learned=s.correct>0; const hasMistake=s.incorrect>0; return <div className={`spelling-word-bank-tile ${hasMistake?'has-mistake':learned?'is-learned':''}`} key={word.id}>
+        {words.map(word => { const s=stats[word.id] || {attempts:0,correct:0,incorrect:0,last_is_correct:null}; const allCorrect=s.attempts>0 && s.correct===s.attempts; const red=s.attempts>0 && s.incorrect/s.attempts>0.5 && s.last_is_correct===false; const orange=s.attempts>0 && s.correct/s.attempts>0.49 && s.last_is_correct===true; const tileStatus=allCorrect?'is-learned':red?'has-mistake':orange?'is-improving':''; return <div className={`spelling-word-bank-tile ${tileStatus}`} key={word.id}>
           <strong>{learned && <span className="spelling-word-check">✓ </span>}{word.word}</strong>
           {s.attempts>0 && <small>Mistakes: {s.incorrect}</small>}
           {s.attempts>0 && <small>Attempts: {s.attempts}</small>}
