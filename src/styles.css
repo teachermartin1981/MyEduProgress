@@ -662,5 +662,6 @@ footer{max-width:1160px;margin:auto;padding:22px 28px 28px;display:flex;justify-
 .spelling-word-bank-tile small{font-size:10px;line-height:1.35;color:#6f7d90}
 .spelling-word-bank-tile.is-learned{background:#e5f7ef;border-color:#d4f0e3}
 .spelling-word-bank-tile.is-learned strong,.spelling-word-bank-tile.is-learned small{color:#00845f}
+.spelling-word-bank-tile small.spelling-mistakes{color:#dc2626!important;font-weight:700}
 .spelling-word-check{font-weight:800}
 @media(max-width:520px){.spelling-word-bank-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.spelling-word-bank-tile{min-height:72px;padding:10px 4px;border-radius:11px}.spelling-word-bank-tile strong{font-size:11px}.spelling-word-bank-tile small{font-size:9px}}
