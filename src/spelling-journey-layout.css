@@ -1,0 +1,56 @@
+/* Spelling Journey cards: use the full available width and show four larger cards per row */
+.spelling-journey-panel .spelling-list-grid.spelling-list-grid-mini {
+  width: 100%;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+.spelling-journey-panel .spelling-list-card-mini {
+  min-width: 0;
+  padding: 13px 12px;
+  border-radius: 11px;
+}
+.spelling-journey-panel .spelling-list-card-mini > strong {
+  font-size: 11px;
+  line-height: 1.4;
+  min-height: 42px;
+  margin: 8px 0 9px;
+}
+.spelling-journey-panel .spelling-mini-top {
+  font-size: 10px;
+}
+.spelling-journey-panel .spelling-status-pill {
+  font-size: 9px;
+  padding: 3px 7px;
+}
+.spelling-journey-panel .spelling-mastery-label {
+  font-size: 9px;
+}
+.spelling-journey-panel .spelling-card-actions-three {
+  gap: 6px;
+  margin-top: 10px;
+}
+.spelling-journey-panel .spelling-card-actions-three button {
+  min-height: 30px;
+  padding: 5px 3px;
+  font-size: 9px;
+  gap: 4px;
+}
+@media (max-width: 760px) {
+  .spelling-journey-panel .spelling-list-grid.spelling-list-grid-mini {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+}
+@media (max-width: 420px) {
+  .spelling-journey-panel .spelling-list-card-mini {
+    padding: 10px 8px;
+  }
+  .spelling-journey-panel .spelling-list-card-mini > strong {
+    font-size: 10px;
+    min-height: 45px;
+  }
+  .spelling-journey-panel .spelling-card-actions-three button {
+    font-size: 8px;
+  }
+}
