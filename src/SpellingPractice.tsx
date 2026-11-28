@@ -112,9 +112,9 @@ export default function SpellingPractice({ list, onBack, studentSessionToken, in
     {loading ? <p className="spelling-state"><Loader2 size={16}/> Loading word history…</p> : mode === 'progress' ? <>
       <div className="spelling-progress-summary"><strong>Word progress</strong><span>{words.filter(w => (stats[w.id]?.attempts || 0) > 0).length} of {words.length} words practised</span></div>
       <div className="spelling-word-bank-grid">
-        {words.map(word => { const s=stats[word.id] || {attempts:0,correct:0,incorrect:0}; const learned=s.correct>0; return <div className={`spelling-word-bank-tile ${learned?'is-learned':''}`} key={word.id}>
+        {words.map(word => { const s=stats[word.id] || {attempts:0,correct:0,incorrect:0}; const learned=s.correct>0; const hasMistake=s.incorrect>0; return <div className={`spelling-word-bank-tile ${hasMistake?'has-mistake':learned?'is-learned':''}`} key={word.id}>
           <strong>{learned && <span className="spelling-word-check">✓ </span>}{word.word}</strong>
-          {s.attempts>0 && <small className="spelling-mistakes">Mistakes: {s.incorrect}</small>}
+          {s.attempts>0 && <small>Mistakes: {s.incorrect}</small>}
           {s.attempts>0 && <small>Attempts: {s.attempts}</small>}
         </div> })}
       </div>
